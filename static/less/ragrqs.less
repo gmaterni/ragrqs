@@ -354,12 +354,12 @@ div.container {
 
 ////////////////////
 *:hover {
-  outline: none; 
-  caret-color: transparent; 
+  outline: none;
+  caret-color: transparent;
 }
 
 textarea:focus {
-  caret-color: auto; 
+  caret-color: auto;
 }
 
 ///////////////////
@@ -384,6 +384,10 @@ div.item2 {
     flex-direction: row;
     align-items: flex-start;
 
+    &:focus-within .clear-button {
+      display: block;
+    }
+
     .text-input {
       flex: 1;
       font-size: @fsize-inp;
@@ -394,6 +398,7 @@ div.item2 {
       color: @text-color;
       border: none;
       padding: 2px;
+      padding-right: 40px;
       height: 100%;
       margin-left: 5px;
       border-radius: 10px;
@@ -406,6 +411,25 @@ div.item2 {
 
       &:focus {
         box-shadow: 0 0 0 2px @border-input;
+      }
+    }
+
+    .clear-button {
+      position: absolute;
+      right: 60px;
+      top: 19vh;
+      padding: 5px;
+      border-radius: 50%;
+      background: @btn-bg;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: darken(@text-color, 20%);
+      display: none;
+      &:hover {
+        font-weight: bold;
+        background: @btn-hover;
+        color: @text-color;
       }
     }
 

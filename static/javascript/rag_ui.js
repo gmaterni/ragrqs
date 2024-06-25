@@ -167,18 +167,56 @@ const hideSpinner = () => {
   document.getElementById("spinner").classList.remove("show-spinner");
 };
 
-let focusFlag = false;
 const TextInput = {
   wnd: null,
   init() {
     this.inp = document.querySelector(".text-input");
-
     document.addEventListener("keydown", (e) => {
       if (document.activeElement !== this.inp) {
-        e.preventDefault();
+        const allowedKeys = [
+          "F1",
+          "F2",
+          "F3",
+          "F4",
+          "F5",
+          "F6",
+          "F7",
+          "F8",
+          "F9",
+          "F10",
+          "F11",
+          "F12",
+          "Control",
+          "Alt",
+          "Shift",
+          "Meta",
+          "CapsLock",
+          "Escape",
+          "PrintScreen",
+          "ScrollLock",
+          "Pause",
+          "Insert",
+          "Delete",
+          "Home",
+          "End",
+          "PageUp",
+          "PageDown",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+        ];
+        if (!allowedKeys.includes(e.key) && !e.ctrlKey && !e.metaKey) {
+          e.preventDefault();
+        }
       }
     });
 
+    const clsBtn = document.querySelector(".clear-button");
+    clsBtn.addEventListener("click", () => {
+      this.inp.value = "";
+      this.inp.focus();
+    });
     // this.inp.addEventListener("keydown", (e) => this.handleEnter(e));
     document.querySelector(".send-input").addEventListener("click", () => this.send());
     document.querySelector(".send2-input").addEventListener("click", () => this.send2());

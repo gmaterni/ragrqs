@@ -1,7 +1,7 @@
 /** @format */
 
 "use strict";
-const VERS = "v 0.1.24";
+const VERS = "v 0.1.25";
 var xlog = console.log;
 var xerror = console.error;
 

@@ -1,7 +1,7 @@
 /** @format */
 
 "use strict";
-const MAX_PROMPT_LENGTH = 1024 * 89;
+const MAX_PROMPT_LENGTH = 1024 * 88;
 
 const Rag = {
   // costituito dalla risposte accumulate sistemate
@@ -61,7 +61,12 @@ const Rag = {
     const diff = MAX_PROMPT_LENGTH - lim;
     return diff;
   },
-
+  substToPoint(str) {
+    const free_len = MAX_PROMPT_LENGTH;
+    const idx = str.indexOf(".", free_len);
+    const lim = (idx != -1 ? idx : free_len) + 1;
+    return lim;
+  },
   //prende la parte di documento accettabile dalla fiestra del modello
   setDocPart() {
     const dl = this.doc.length;
@@ -71,8 +76,9 @@ const Rag = {
       this.doc_part = this.doc;
       this.doc = "";
     } else {
-      const idx = this.doc.indexOf(".", free_len);
-      const lim = (idx != -1 ? idx : free_len) + 1;
+      // const idx = this.doc.indexOf(".", free_len);
+      // const lim = (idx != -1 ? idx : free_len) + 1;
+      const lim = this.substToPoint(this.doc);
       this.doc_part = this.doc.substring(0, lim);
       this.doc = this.doc.substring(lim).trim();
     }
