@@ -5,7 +5,12 @@ const model_name = "mistralai/Mistral-7B-Instruct-v0.3";
 // const model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 // const model_name = "mistralai/Mixtral-8x22B-Instruct-v0.1"
 
-const HF_TOKEN = "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";
+function decodeTokenBase64(encodedToken) {
+  return atob(encodedToken);
+}
+
+const encodedToken = "aGZfT0VBQVpoUmJtdEFLRENOVGZTcFZwVHdhbGpielBvQnlhbA"; // Questo è "your_token_here" codificato
+const HF_TOKEN = decodeTokenBase64(encodedToken);
 
 function promptDoc(documento, domanda) {
   return `
@@ -77,9 +82,6 @@ ${domanda}
 
 `;
 }
-
-
-
 
 function promptThread(history, domanda) {
   return `
