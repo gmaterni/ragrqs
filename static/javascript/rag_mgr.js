@@ -15,8 +15,6 @@ const Rag = {
   prompts: [],
   doc: "",
   doc_part: "",
-  responseText: "",
-  num_rsp: 0,
   saveToDb() {
     const js = {
       context: this.ragContext,
@@ -52,6 +50,7 @@ const Rag = {
     let s = `${msg} mx:${maxl} d.rest:${drl} d.part:${dpl} rsps:${rspsl}`;
     xlog(s);
     s = `${msg}${d}${drl}${d}${dpl}${d}${rspsl}`;
+    //nsg dic.length doc_part.length responses.length
     UaLog.log(s);
   },
   checkInput(prompt) {
@@ -89,14 +88,12 @@ const Rag = {
   // documenti => risposte RAG => context
   // legge  dicumenti   locali
   async requestDocsRAG(query) {
-    this.num_rsp = 0;
     ThreadMgr.init();
     DataMgr.deleteDati();
     DataMgr.readDbDocNames();
     DataMgr.readDbDocs();
     this.ragQuery = query;
     this.ragContext = "";
-    this.responseText = "";
     this.responses = [];
     this.prompts = [];
     let ndoc = 0;
@@ -131,7 +128,6 @@ const Rag = {
             prompt = promptDoc(s, query);
           }
 
-          this.num_rsp++;
           this.log(`${ndoc},${npart}`);
 
           const payload = getPayloadDoc(prompt);
@@ -159,9 +155,8 @@ const Rag = {
         const s = accumaltes.substring(0, lim);
         prompt = promptToContext(s, query);
       }
-      this.addPrompt(prompt);
+      // this.addPrompt(prompt);
 
-      this.num_rsp++;
       const pl = prompt.length;
       UaLog.log(`Contesto  (${pl})`);
 
@@ -170,7 +165,7 @@ const Rag = {
       // this.responses.push(text);
       // text = cleanResponse(text);
       // text = cleanText(text);
-      this.ragContext = text; 
+      this.ragContext = text;
 
       //salva variabili del processo RAG
       this.saveToDb();
@@ -181,38 +176,40 @@ const Rag = {
     }
 
     // query finale utilizza context
-    try {
-      let prompt = promptWithContext(this.ragContext, query);
-      const diff = this.checkInput(prompt);
-      if (diff < 0) {
-        UaLog.log(`ToContext error size: ${diff}`);
-        const lim = this.ragContext.length + diff;
-        const s = this.ragContext.substring(0, lim);
-        prompt = promptToContext(s, query);
+    {
+      let text = "";
+      try {
+        let prompt = promptWithContext(this.ragContext, query);
+        const diff = this.checkInput(prompt);
+        if (diff < 0) {
+          UaLog.log(`ToContext error size: ${diff}`);
+          const lim = this.ragContext.length + diff;
+          const s = this.ragContext.substring(0, lim);
+          prompt = promptToContext(s, query);
+        }
+        // this.addPrompt(prompt);
+
+        const pl = prompt.length;
+        UaLog.log(`Risposta  (${pl})`);
+
+        const payload = getPayloadQuery(prompt);
+        text = await requestPost(payload);
+        text = cleanResponse(text);
+        // text = cleanText(text);
+        this.responses.push(text);
+
+        // salva localmente le risposte elaborate
+        this.saveRespToDb();
+        //salva variabili del processo RAG
+        this.saveToDb();
+      } catch (error) {
+        text = error;
+        xerror(error);
+        alert("requestDocsRAG(3)\n" + error);
+        throw error;
+      } finally {
+        return text;
       }
-      this.addPrompt(prompt);
-
-      this.num_rsp++;
-      const pl = prompt.length;
-      UaLog.log(`Risposta  (${pl})`);
-
-      const payload = getPayloadQuery(prompt);
-      this.responseText = await requestPost(payload);
-      this.responseText = cleanResponse(this.responseText);
-      // this.responseText = cleanText(this.responseText);
-      this.responses.push(this.responseText);
-
-      // salva localmente le risposte elaborate
-      this.saveRespToDb();
-      //salva variabili del processo RAG
-      this.saveToDb();
-    } catch (error) {
-      this.responseText = error;
-      xerror(error);
-      alert("requestDocsRAG(3)\n" + error);
-      throw error;
-    } finally {
-      return this.responseText;
     }
   },
 
@@ -222,11 +219,12 @@ const Rag = {
     this.readFromDb();
 
     if (!this.ragContext) {
-      const ok = confirm("Contesto vuoto, continuare?");
+      const ok = confirm("Contesto vuoto, vuoi continuare?");
       if (!ok) return "";
     }
 
     if (ThreadMgr.isFirst()) {
+      let outText = "";
       try {
         let context = this.ragContext;
         let prompt = promptWithContext(context, query);
@@ -237,26 +235,28 @@ const Rag = {
           context = this.ragContext.substring(-diff);
           prompt = promptWithContext(context, query);
         }
+        this.addPrompt(prompt);
         ThreadMgr.add("", context); // inizio thread
-        UaLog.log(`Inizio Conv.  (${prompt.length})`);
+        UaLog.log(`Inizio Conversazione  (${prompt.length})`);
         const payload = getPayloadQuery(prompt);
-        this.responseText = await requestPost(payload);
-        // this.responseText = cleanResponse(this.responseText);
-        // this.responseText=cleanText(this.responseText);
+        let text = await requestPost(payload);
+        // text = cleanResponse(text);
+        // text=cleanText(text);
 
-        ThreadMgr.add(query, this.responseText);
-        this.responseText = ThreadMgr.getText();
+        ThreadMgr.add(query, text);
+        outText = ThreadMgr.getOutText();
       } catch (error) {
-        this.responseText = error;
-        xerror(error);
         alert("requestContext(1) \n" + error);
+        outText = error;
+        xerror(error);
         throw error;
       } finally {
-        return this.responseText;
+        return outText;
       }
     } else {
+      let outText = "";
       try {
-        let thread = ThreadMgr.getText();
+        let thread = ThreadMgr.getThread();
         let prompt = promptThread(thread, query);
 
         const diff = this.checkInput(prompt);
@@ -265,22 +265,23 @@ const Rag = {
           thread = thread.substring(-diff);
           prompt = promptThread(thread, query);
         }
+        this.addPrompt(prompt);
 
         UaLog.log(` Conv.  (${prompt.length})`);
         const payload = getPayloadQuery(prompt);
-        this.responseText = await requestPost(payload);
-        // this.responseText = cleanResponse(this.responseText);
-        // this.responseText=cleanText(this.responseText);
+        let text = await requestPost(payload);
+        // text = cleanResponse(text);
+        // text=cleanText(text);
 
-        ThreadMgr.add(query, this.responseText);
-        this.responseText = ThreadMgr.getText();
+        ThreadMgr.add(query, text);
+        outText = ThreadMgr.getOutText();
       } catch (error) {
-        this.responseText = erroor;
-        xerror(error);
         alert("requestContext(2) \n" + error);
+        outText = error;
+        xerror(error);
         throw error;
       } finally {
-        return this.responseText;
+        return outText;
       }
     }
   },
@@ -301,20 +302,27 @@ const ThreadMgr = {
     this.rows.push(row);
   },
   getRows() {
-    return this.rows;
-  },
-  getText() {
-    const lst = [];
+    const rows = [];
     for (const ua of this.rows) {
       const u = ua[0].trim();
       const a = ua[1].trim();
       if (u == "") {
-        lst.push(`<Contesto>:\n${a}\n\n`);
+        rows.push(`<Contesto>:\n${a}\n\n`);
       } else {
-        lst.push(`<User>:\n${u}\n<LLM>:\n${a}\n\n`);
+        rows.push(`<Utente>:\n${u}\n<Assitente>:\n${a}\n\n`);
       }
     }
-    return lst.join("").trim();
+    return rows;
+  },
+  getOutText() {
+    const rows = this.getRows();
+    const text = rows.slice(1).join("").trim();
+    return text;
+  },
+  getThread() {
+    const rows = this.getRows();
+    const text = rows.join("").trim();
+    return text;
   },
   isFirst() {
     return this.rows.length == 0;
