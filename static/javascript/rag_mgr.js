@@ -310,7 +310,7 @@ const ThreadMgr = {
     for (const ua of this.rows) {
       const u = ua[0].trim();
       const a = ua[1].trim();
-      rows.push(`<user>:\n${u}\n<Assitant>:\n${a}\n\n`); //AAA
+      rows.push(`<user>:\n${u}\n<Assistant>:\n${a}\n\n`); //AAA
     }
     let text = rows.join("").trim();
     return clean(text);
