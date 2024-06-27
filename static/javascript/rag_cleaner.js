@@ -49,7 +49,7 @@ function list2text(lst) {
   return text;
 }
 
-// elimina le parole tipo "## examplei :""
+// elimina le parole tipo "## example :""
 function cleanResponse(text) {
   // const ptr = /#+\s*(\w+)\s*(:\s*)?/g; // globalw
   const ptr = /#+\s*(\w+)\s*(:\s*)?/; //solo la prima

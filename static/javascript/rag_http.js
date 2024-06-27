@@ -70,7 +70,7 @@ Utilizza le informazioni estratte dai documenti forniti per rispondere alla doma
 ## Informazioni Espresse dai Documenti:
 <<< ${risposte} >>>
 
-## Domanda Specificata:
+## Domanda Specifica:
 ${domanda}
 
 ## Nota Finale:
@@ -78,11 +78,20 @@ Rispondi esclusivamente in italiano, utilizzando un linguaggio chiaro e corretto
 `;
 }
 
-function promptThread(history, domanda) {
+function promptThread(context, history, question) {
   return `
-  ${history}
-  ${domanda}
-`;
+## context:
+${context}
+
+## conversation_history:
+${history}
+
+## question:
+${question}
+
+## Nota Finale:
+Usa linguaggio chiaro e corretto. L'output è destinato ad essere letto da un essere umano.
+  `;
 }
 
 const getPayloadDoc = (prompt) => {

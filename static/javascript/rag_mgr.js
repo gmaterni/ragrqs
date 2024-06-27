@@ -228,7 +228,6 @@ const Rag = {
       try {
         let context = this.ragContext;
         let prompt = promptWithContext(context, query);
-
         const diff = this.checkInput(prompt);
         if (diff < 0) {
           UaLog.log(`Conv. error size: ${diff}`);
@@ -236,14 +235,12 @@ const Rag = {
           prompt = promptWithContext(context, query);
         }
         this.addPrompt(prompt);
-        ThreadMgr.add("", context); // inizio thread
         UaLog.log(`Inizio Conversazione  (${prompt.length})`);
         const payload = getPayloadQuery(prompt);
         let text = await requestPost(payload);
         // text = cleanResponse(text);
         // text=cleanText(text);
-
-        ThreadMgr.add(query, text);
+        ThreadMgr.add(query, text); 
         outText = ThreadMgr.getOutText();
       } catch (error) {
         alert("requestContext(1) \n" + error);
@@ -256,15 +253,17 @@ const Rag = {
     } else {
       let outText = "";
       try {
+        let context = this.ragContext;
         let thread = ThreadMgr.getThread();
-        let prompt = promptThread(thread, query);
-
+        let prompt = promptThread(context, thread, query);
         const diff = this.checkInput(prompt);
         if (diff < 0) {
           UaLog.log(`Conv. error size: ${diff}`);
           thread = thread.substring(-diff);
-          prompt = promptThread(thread, query);
+          prompt = promptThread(context, thread, query);
         }
+        xlog("-------------------------")
+        xlog(prompt);
         this.addPrompt(prompt);
 
         UaLog.log(` Conv.  (${prompt.length})`);
@@ -272,7 +271,6 @@ const Rag = {
         let text = await requestPost(payload);
         // text = cleanResponse(text);
         // text=cleanText(text);
-
         ThreadMgr.add(query, text);
         outText = ThreadMgr.getOutText();
       } catch (error) {
@@ -292,35 +290,38 @@ const ThreadMgr = {
   init() {
     this.rows = [];
   },
-  clean(doc) {
-    const regex = /<[^>]+>\s*:?/g;
-    return doc.replace(regex, "");
+  clean(text) {
+    text = text.replace(/\n\s*\n/g, "\n");
+    return text;
+    // const regex = /<[^>]+>\s*:?/g;
+    // return text.replace(regex, "");
   },
   add(query, response) {
     const rsp = this.clean(response);
     const row = [query, rsp];
     this.rows.push(row);
   },
-  getRows() {
+  getOutText() {
+    const clean = (text) => {
+      const ptr = /#+\s*(\w+)\s*(:\s*)?/; //solo la prima
+      return text.replace(ptr, "");
+    };
     const rows = [];
     for (const ua of this.rows) {
       const u = ua[0].trim();
       const a = ua[1].trim();
-      if (u == "") {
-        rows.push(`<Contesto>:\n${a}\n\n`);
-      } else {
-        rows.push(`<Utente>:\n${u}\n<Assitente>:\n${a}\n\n`);
-      }
+      rows.push(`<user>:\n${u}\n<Assitant>:\n${a}\n\n`); //AAA
     }
-    return rows;
-  },
-  getOutText() {
-    const rows = this.getRows();
-    const text = rows.slice(1).join("").trim();
-    return text;
+    let text = rows.join("").trim();
+    return clean(text);
   },
   getThread() {
-    const rows = this.getRows();
+    const rows = [];
+    for (const ua of this.rows) {
+      const u = ua[0].trim();
+      const a = ua[1].trim();
+      rows.push(`<user>:\n${u}\n<Assitant>:\n${a}\n\n`); //AAA
+    }
     const text = rows.join("").trim();
     return text;
   },
