@@ -12,7 +12,7 @@
 // }
 // jshint esversion: 8
 // release 09-'6-24
-// AAA utilizzare l'ultima versione di WindowAdm
+// utilizzare l'ultima versione di UaWindowAdm
 // setXY con vw ,vh
 var UaLog = {
   callHide: function () {},

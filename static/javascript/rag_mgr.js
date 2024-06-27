@@ -83,7 +83,7 @@ const Rag = {
     }
   },
   addPrompt(p) {
-    this.prompts.push(p);
+    // this.prompts.push(p);
   },
   // documenti => risposte RAG => context
   // legge  dicumenti   locali
@@ -262,8 +262,8 @@ const Rag = {
           thread = thread.substring(-diff);
           prompt = promptThread(context, thread, query);
         }
-        xlog("-------------------------")
-        xlog(prompt);
+        // xlog("-------------------------")
+        // xlog(prompt);
         this.addPrompt(prompt);
 
         UaLog.log(` Conv.  (${prompt.length})`);
@@ -310,7 +310,7 @@ const ThreadMgr = {
     for (const ua of this.rows) {
       const u = ua[0].trim();
       const a = ua[1].trim();
-      rows.push(`<user>:\n${u}\n<Assistant>:\n${a}\n\n`); //AAA
+      rows.push(`<user>:\n${u}\n<Assistant>:\n${a}\n\n`); 
     }
     let text = rows.join("").trim();
     return clean(text);
@@ -320,7 +320,7 @@ const ThreadMgr = {
     for (const ua of this.rows) {
       const u = ua[0].trim();
       const a = ua[1].trim();
-      rows.push(`<user>:\n${u}\n<Assitant>:\n${a}\n\n`); //AAA
+      rows.push(`<user>:\n${u}\n<Assitant>:\n${a}\n\n`); 
     }
     const text = rows.join("").trim();
     return text;

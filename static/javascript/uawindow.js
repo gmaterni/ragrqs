@@ -191,7 +191,7 @@ var UaWindowAdm = {
       close() {
         this.w.style.display = "none";
         this.w.innerHTML = "";
-        // AAA this.w.innerHTML = "block";
+        // this.w.innerHTML = "block";
         this.isOpen = false;
         return this;
       },
