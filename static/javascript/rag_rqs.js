@@ -19,7 +19,7 @@
  */
 
 "use strict";
-const VERS = "0.1.41 (07-08-2024)";
+const VERS = "0.1.42 (08-08-2024)";
 
 var xlog = console.log;
 var xerror = console.error;
