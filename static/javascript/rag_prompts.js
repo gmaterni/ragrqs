@@ -5,7 +5,7 @@
 function promptDoc(documento, domanda, docName) {
   return `
 SYSTEM:
-Sei un assistente AI specializzato nell'analisi di documenti. Rispondi sempre in italiano.
+Sei un assistente AI specializzato nell'analisi di documenti.Rispondi sempre ed esclusivamente in italiano.
 
 TASK:
 Analizzare il documento ${docName} ed estrarre le informazioni rilevanti per rispondere alla domanda fornita.
@@ -13,11 +13,11 @@ Analizzare il documento ${docName} ed estrarre le informazioni rilevanti per ris
 INSTRUCTIONS:
 1. Analizza attentamente il documento fornito e identifica le informazioni pertinenti alla domanda.
 2. Estrai i concetti chiave e fai inferenze ragionevoli.
-3 Organizza le informazioni in modo logico.
-4. Prepara una risposta completa.
+3. Organizza le informazioni in modo logico.
+4. Prepara una risposta chiara e completa.
 5. Includi un'introduzione breve, sviluppa l'analisi, presenta le inferenze e concludi con una sintesi.
 6. Cita le fonti quando è utile per chiarire informazioni o inferenze.
-7. Assicurati che la risposta sia interamente in italiano, traduci in italiano se nel testo è usata un'altra lingua
+7. Assicurati che la risposta sia interamente in italiano,se nel testo è usata un'altra lingua traduci in italiano.
 8. Mantieni un tono oggettivo e uno stile fluido e coerente.
 
 DOCUMENT:
@@ -29,10 +29,47 @@ QUESTION:
 ${domanda}
 
 OUTPUT_FORMAT:
-Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Non usare etichette, introduzioni, elenchi o marcatori speciali.
+Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Evita di usare etichette, introduzioni, elenchi o marcatori speciali.
 
 RESPONSE:
   `;
+}
+
+function promptBuildContext(document) {
+  return `
+  SYSTEM:
+Sei un assistente AI specializzato nell'analisi di documenti.Rispondi sempre ed esclusivamente in italiano.
+
+TASK:
+Analizza e riorganizza logicamente il documento fornito. Attieniti rigorosamente alle istruzioni.
+
+INSTRUCTIONS:
+1. Valuta la tipologia e lo scopo del documento (es. articolo scientifico, racconto,saggio, documento tecnico) e adatta l'analisi di conseguenza.
+2. Analizza attentamente il documento e identifica i temi principali e i concetti chiave.
+3. Estrai i concetti chiave e fai inferenze ragionevoli.
+4. Organizza le informazioni in una struttura logica e coerente, eliminando ridondanze e ripetizioni.
+5. Prepara una risposta che riorganizzi i contenuti, dando priorità alle informazioni più importanti o rilevanti.
+6. Includi un'introduzione breve che presenti i temi principali.
+7. Sviluppa l'analisi raggruppando le informazioni per argomenti correlati.
+8. Presenta le inferenze e le connessioni tra i diversi concetti.
+9. Se presenti informazioni contrastanti, evidenziale senza eliminarle.
+10. Includi, se rilevanti, dettagli specifici come nomi propri, termini tecnici, date o luoghi che contribuiscono alla precisione del contesto.
+11. Concludi con una sintesi che riassuma i punti chiave e la struttura logica.
+12. Se il documento contiene sezioni distinte, analizzale separatamente ma evidenzia le connessioni tra di esse.
+13. Effettua un controllo finale per assicurarti che tutte le informazioni chiave siano state incluse.
+14. Assicurati che la risposta sia interamente in italiano.
+15. Mantieni un tono oggettivo e uno stile fluido e coerente.
+
+DOCUMENT:
+<<<BEGIN_DOCUMENT>>>
+${document}
+<<<END_DOCUMENT>>>
+
+OUTPUT_FORMAT:
+Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Evita di  usare etichette, elenchi o marcatori speciali.
+
+RESPONSE:
+`;
 }
 
 function promptWithContext(contesto, domanda) {
@@ -50,7 +87,7 @@ INSTRUCTIONS:
 4. Struttura la risposta in paragrafi logici.
 5. Includi un'introduzione breve, sviluppa l'analisi, presenta le inferenze e concludi con una sintesi.
 6. Se la domanda richiede di citare le fonti, fai riferimento al documento fornito distinguendolo chiaramente da eventuali altre fonti citate all'interno del documento stesso.
-7. Assicurati che la risposta sia interamente in italiano, traduci in italiano se nel testo è usata un'altra lingua
+7. Assicurati che la risposta sia interamente in italiano.
 8. Mantieni un tono oggettivo e uno stile fluido e coerente.
 
 CONTEXT:
@@ -87,6 +124,7 @@ INSTRUCTIONS:
 8. Se l'intento non è chiaro, chiedi gentilmente chiarimenti invece di fare supposizioni.
 9. Sii flessibile: se la richiesta implica un'azione specifica, adattati di conseguenza.
 10. Se è necessario integrare con conoscenze generali, specifica chiaramente quando lo stai facendo.
+11. Assicurati che la risposta sia interamente in italiano.
 
 CONTEXT:
 <<<BEGIN_CONTEXT>>>
@@ -101,7 +139,7 @@ REQUEST:
 ${richiesta}
 
 OUTPUT_FORMAT:
-Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Non usare etichette, introduzioni, elenchi o marcatori speciali.
+Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Evita di usare etichette, elenchi o marcatori speciali.
 
 RESPONSE:
   `;
@@ -168,7 +206,7 @@ function getPayloadDoc(prompt) {
       task: "text2text-generation",
       max_new_tokens: 1024,
       num_return_sequences: 1,
-      temperature: 0.4,
+      temperature: 0.5,
       top_k: 50,
       top_p: 0.7,
       do_sample: false,
@@ -188,6 +226,32 @@ function getPayloadDoc(prompt) {
   return payload;
 }
 
+function getPayloadBuildContext(prompt) {
+  const payload = {
+    inputs: prompt,
+    parameters: {
+      task: "text2text-generation",
+      max_new_tokens: 4096,
+      num_return_sequences: 1,
+      temperature: 0.4,
+      top_k: 20,
+      top_p: 0.8,
+      do_sample: false,
+      no_repeat_ngram_size: 4,
+      num_beams: 6,
+      repetition_penalty: 1.4,
+      return_full_text: false,
+      details: false,
+      max_time: 120.0,
+      seed: 42
+    },
+    options: {
+      use_cache: false,
+      wait_for_model: true,
+    },
+  };
+  return payload;
+}
 
 function getPayloadWithContext(prompt) {
   const payload = {

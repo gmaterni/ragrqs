@@ -42,7 +42,6 @@ var UaLog = {
       textAlign: "center",
       padding: "2px 2px 2px 2px",
       margin: "5px 0 0 0",
-      // background: "#111111",
       background: "#333333",
       color: "#ffffff",
       fontSize: "15px",
@@ -63,9 +62,9 @@ var UaLog = {
       background: "#000000",
       maxHeight: "400px",
       overflow: "auto",
-      // scrollbarColor: "#ab3205 #ffffff",
       scrollbarColor: "#027876 #454444",
       scrollbarWidth: "auto",
+      whiteSpace:"pre",
     };
     for (const k in msg_css) msg.style[k] = msg_css[k];
 

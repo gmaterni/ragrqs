@@ -58,7 +58,7 @@ const WndPre = (id) => {
       try {
         await navigator.clipboard.writeText(t);
       } catch (err) {
-        xerror("Errore  ", err);
+        console.error("Errore  ", err);
       }
     },
   };
@@ -105,7 +105,7 @@ const WndDiv = (id) => {
       try {
         await navigator.clipboard.writeText(t);
       } catch (err) {
-        xerror("Errore  ", err);
+        console.error("Errore  ", err);
       }
     },
   };
@@ -149,7 +149,7 @@ const Menu = {
     UaLog.callHide = hide;
     UaLog.callShow = show;
 
-    UaLog.setXY(64, 13).setZ(111).new();
+    UaLog.setXY(54, 13).setZ(111).new();
     UaLog.log_show("Buon Lavoro");
   },
   close() {
@@ -226,12 +226,12 @@ const TextInput = {
       this.inp.value = "";
       this.inp.focus();
     });
-    this.inp.addEventListener("keydown", (e) => this.handleEnter(e)); //TODO
+    this.inp.addEventListener("keydown", (e) => this.handleEnter(e)); 
     document.querySelector(".send-input").addEventListener("click", () => this.send());
     document.querySelector(".send2-input").addEventListener("click", () => this.send2());
     document.querySelector(".clear-input").addEventListener("click", () => this.clear());
   },
-  handleEnter(e) { //TODO
+  handleEnter(e) { 
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       this.send2();
@@ -247,7 +247,6 @@ const TextInput = {
       alert("Ricorda di scrivere la Query  ");
       return;
     }
-    // Rag.readFromDb();XXX
     if (!!Rag.ragContext) {
       const ok = confirm("Vuoi iniziare una nuova elabrazione ?");
       if (!ok) return "";
@@ -262,7 +261,7 @@ const TextInput = {
       UaLog.close();
     } catch (err) {
       const msg = `send\n${err}`;
-      xerror(msg);
+      console.error(msg);
       alert(msg);
       setOutText(msg);
     }
@@ -289,7 +288,7 @@ const TextInput = {
       this.inp.value = "";
     } catch (err) {
       const msg = `send2\n${err}`;
-      xerror(msg);
+      console.error(msg);
       alert(msg);
       setOutText(msg);
     }
@@ -300,7 +299,7 @@ const TextInput = {
     if (!ok) return;
     this.inp.value = "";
     setOutText("");
-    ThreadMgr.init(); //AAA
+    ThreadMgr.init(); 
   },
 };
 
@@ -337,7 +336,7 @@ TextOutput = {
     try {
       await navigator.clipboard.writeText(t);
     } catch (err) {
-      xerror("Errore  ", err);
+      console.error("Errore  ", err);
     }
     setTimeout(() => {
       this.copyBtn.classList.remove("copied");

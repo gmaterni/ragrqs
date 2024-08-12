@@ -22,6 +22,52 @@ const MAX_PROMPT_LENGTH = 1024 * 80;
 // decremento dopo errore per tokens eccessivi
 const PROMPT_DECR = 1024 * 2;
 
+const TIMEOUT = 60000;
+
+const truncInput = (txt, decr) => {
+  const tl = txt.length;
+  const lim = tl - decr;
+  const s = txt.substring(0, lim);
+  return s;
+};
+
+const getPartSize = (doc, prompt, decr) => {
+  const limitWIthPoint = (s, free_len) => {
+    const idx = s.indexOf(".", free_len);
+    let lim = (idx != -1 ? idx : free_len) + 1;
+    if (lim > free_len + 100) {
+      lim = free_len;
+    }
+    return lim;
+  };
+  const dpl = doc.length + prompt.length;
+  const free_len = MAX_PROMPT_LENGTH - decr;
+  let size = 0;
+  if (dpl < free_len) {
+    size = doc.length;
+  } else {
+    size = limitWIthPoint(doc, free_len);
+  }
+  return size;
+};
+
+const getPartDoc = (pRgt, partSize) => {
+  const pLft = pRgt.substring(0, partSize);
+  pRgt = pRgt.substring(partSize).trim();
+  return [pLft, pRgt];
+};
+
+const ragLog = (msg, lftLen, rgtLen, responses) => {
+  const maxl = MAX_PROMPT_LENGTH;
+  const rspsl = responses.reduce((acc, cur) => {
+    return acc + cur.length;
+  }, 0);
+  let s = `${msg} mx:${maxl} lft:${lftLen} rgt:${rgtLen} arr:${rspsl}`;
+  xlog(s);
+  s = `${msg}   ${lftLen}   ${rgtLen}   ${rspsl}`;
+  UaLog.log(s);
+};
+
 const Rag = {
   // costituito dalla risposte accumulate sistemate
   ragContext: "",
@@ -30,6 +76,7 @@ const Rag = {
   // risposta finale alla qury contetso
   ragResponse: "",
   responses: [],
+  answers: [],
   prompts: [],
   doc: "",
   doc_part: "",
@@ -59,250 +106,216 @@ const Rag = {
   readRespsFromDb() {
     this.responses = UaDb.readArray(ID_RESPONSES);
   },
-  addPrompt(p) {
-    this.prompts.push(p);
-  },
-  responsesLength() {
-    const rspsl = this.responses.reduce((acc, cur) => {
-      return acc + cur.length;
-    }, 0);
-    return rspsl;
-  },
-  ragLog(msg, lftLen, rgtLen) {
-    const maxl = MAX_PROMPT_LENGTH;
-    const rspsl = this.responsesLength();
-    const d = "&nbsp;&nbsp;&nbsp;&nbsp;";
-    let s = `${msg} mx:${maxl} lft:${lftLen} rgt:${rgtLen} arr:${rspsl}`;
-    xlog(s);
-    s = `${msg}${d}${lftLen}${d}${rgtLen}${d}${rspsl}`;
-    //nsg plft.length prgt.length responses.length
-    UaLog.log(s);
-  },
-  truncInput(txt, decr) {
-    const tl = txt.length;
-    const lim = tl - decr;
-    const s = txt.substring(0, lim);
-    return s;
-  },
-  getPartSize(doc, prompt, decr) {
-    const limitWIthPoint = (s, free_len) => {
-      const idx = s.indexOf(".", free_len);
-      let lim = (idx != -1 ? idx : free_len) + 1;
-      if (lim > free_len + 100) {
-        lim = free_len;
-      }
-      return lim;
-    };
-
-    const dpl = doc.length + prompt.length;
-    const free_len = MAX_PROMPT_LENGTH - decr;
-    let size = 0;
-    if (dpl < free_len) {
-      size = doc.length;
-    } else {
-      size = limitWIthPoint(doc, free_len);
-    }
-    return size;
-  },
-  getPartDoc(pRgt, partSize) {
-    const pLft = pRgt.substring(0, partSize);
-    pRgt = pRgt.substring(partSize).trim();
-    return [pLft, pRgt];
-  },
- // documenti => risposte RAG => context
+  // addPrompt(p) {
+  //   this.prompts.push(p);
+  // },
+  // documenti => risposte RAG => context
   async requestDocsRAG(query) {
     DataMgr.deleteJsonDati();
     DataMgr.readDbDocNames();
     DataMgr.readDbDocs();
     this.ragQuery = query;
     let ndoc = 0;
-
     try {
       for (let i = 0; i < DataMgr.docs.length; i++) {
         let doc = DataMgr.docs[i];
         if (doc.trim() == "") continue;
-        const doc_name = DataMgr.doc_names[i];
+        const docName = DataMgr.doc_names[i];
         const doc_entire_len = doc.length;
-        xlog(`${doc_name} (${doc_entire_len}) `);
-        UaLog.log(`${doc_name} (${doc_entire_len}) `);
-
+        xlog(`${docName} (${doc_entire_len}) `);
+        UaLog.log(`${docName} (${doc_entire_len}) `);
         ++ndoc;
         let npart = 0;
         let decr = 0;
         let prompt = "";
         let lft = "";
         let rgt = "";
-
+        let text = "";
+        let docAnswers = [];
         while (true) {
-          let partSize = this.getPartSize(doc, promptDoc("", query), decr);
+          let partSize = getPartSize(doc, promptDoc("", query), decr);
           if (partSize < 10) {
             break;
           }
-          [lft, rgt] = this.getPartDoc(doc, partSize);
-          this.ragLog(`${ndoc},${npart + 1}`, lft.length, rgt.length);
+          [lft, rgt] = getPartDoc(doc, partSize);
+          ragLog(`${ndoc},${npart + 1}`, lft.length, rgt.length, this.responses);
           prompt = promptDoc(lft, query);
           const payload = getPayloadDoc(prompt);
-          let text;
           try {
-            text = await HfRequest.post(payload);
+            text = await HfRequest.post(payload, TIMEOUT);
             if (!text) return "";
           } catch (err) {
-            const e = errorInfo(err);
-            if (e.errorType === ERROR_TOKENS) {
+            const ei = errorInfo(err);
+            if (ei.errorType === ERROR_TOKENS) {
               UaLog.log(`Error tokens.1  ${lft.length}`);
-              xerror(`Error tokens.  ${prompt.length}`);
+              console.error(`Error tokens. Doc ${prompt.length}`);
               decr += PROMPT_DECR;
               continue;
             } else {
-              xerror(err);
-              const s = errorToText(err);
-              throw s;
+              console.error(err);
+              throw err;
             }
           }
-
           npart++;
           doc = rgt;
-          text = cleanResponse(text); //TODO
-          const docText = `<<<${doc_name}>>>\n${text}`; //TODO
-          this.responses.push(docText);
-          // this.ragLog(`${doc_name}  ${ndoc},${npart}`, lft.length, rgt.length);
+          text = cleanResponse(text);
+          docAnswers.push(text);
+          const s = `DOCUMENTO : ${docName}\n${text}`;
+          this.responses.push(s);
         } // end while
-      } // end for
-    } catch (error) {
-      alert("requestDocsRAG(1)\n" + error);
-      xerror(error);
+        //implemntare build context
+        let donAnsLen = 0;
+        if (docAnswers == 1) {
+          //il docuento non è duvuso in parti
+          text = docAnswers[0];
+          donAnsLen = text.length;
+        } else {
+          //il documento è diviso in parto
+          text = docAnswers.join("\n");
+          donAnsLen = text.length;
+          while (true) {
+            prompt = promptBuildContext(text);
+            const payload = getPayloadBuildContext(prompt);
+            try {
+              text = await HfRequest.post(payload, TIMEOUT);
+              if (!text) return "";
+            } catch (err) {
+              const ei = errorInfo(err);
+              if (ei.errorType === ERROR_TOKENS) {
+                UaLog.log(`Error tokens.2  ${lft.length}`);
+                console.error(`Error tokens buildContext. ${prompt.length}`);
+                text = truncInput(text, PROMPT_DECR);
+                continue;
+              } else {
+                console.error(err);
+                throw err;
+              }
+            }
+            break;
+          } //end while
+        } //end else
+        UaLog.log(`context  ${donAnsLen} => ${text.length}`);
+        text = cleanResponse(text);
+        text = `DOCUMENTO: ${docName}\n ${text}`;
+        this.answers.push(text);
+      } // end for document
+    } catch (err) {
+      console.error(err);
+      throw err;
     }
-
-    const resps = list2text(this.responses);
-    this.ragContext = resps;
+    // costruzione context
+    this.ragContext = this.answers.join("\n");
     this.saveToDb();
-
     // query finale utilizza context
     {
       let text = "";
       try {
         let prompt = promptWithContext(this.ragContext, query);
         const payload = getPayloadWithContext(prompt);
-
         try {
-          text = await HfRequest.post(payload);
+          text = await HfRequest.post(payload, TIMEOUT);
           if (!text) return "";
         } catch (err) {
-          const e = errorInfo(err);
-          const s = errorToText(err);
-          if (e.errorType === ERROR_TOKENS) {
-            xerror(err);
-            throw s;
+          const ei = errorInfo(err);
+          const et = errorToText(err);
+          if (ei.errorType === ERROR_TOKENS) {
+            console.error(err);
+            throw et;
           } else {
-            xerror(err);
-            throw s;
+            console.error(err);
+            throw et;
           }
         }
+        text = cleanResponse(text);
         this.ragResponse = text;
         this.saveRespToDb();
         ThreadMgr.init();
         this.saveToDb();
         const pl = prompt.length;
         UaLog.log(`Risposta  (${pl},${text.length})`);
-      } catch (error) {
-        text = error;
-        xerror(error);
-        alert("requestDocsRAG(3)\n" + error);
-        throw error;
+      } catch (err) {
+        text = `${err}`;
+        console.error(err);
+        throw err;
       } finally {
-        text = cleanOutput(text);
         return text;
       }
-    }
+    } // end query
   },
-
   // thread
   async requestContext(query) {
-    // this.readFromDb(); XXX
-
+    let text = "";
     if (!this.ragContext) {
       const ok = await confirm("Contesto vuoto. Vuoi continuare?");
       if (!ok) return "";
     }
-
     if (ThreadMgr.isFirst()) {
-      let outText = "";
-      ThreadMgr.init(); //AAA
+      ThreadMgr.init();
       try {
         let context = this.ragContext;
         const thread = ThreadMgr.getThread();
         prompt = promptThread(context, thread, query);
         const payload = getPayloadThread(prompt);
-
-        let text;
         try {
-          text = await HfRequest.post(payload);
+          text = await HfRequest.post(payload, TIMEOUT);
           if (!text) return "";
         } catch (err) {
-          const e = errorInfo(err);
-          if (e.errorType === ERROR_TOKENS) {
+          const ei = errorInfo(err);
+          if (ei.errorType === ERROR_TOKENS) {
             UaLog.log(`Error tokens.4  ${prompt.length}`);
-            xerror(err);
+            console.error(err);
             throw err;
           } else {
-            alert(err);
-            xerror(err);
+            console.error(err);
             throw err;
           }
         }
+        text = cleanResponse(text);
         ThreadMgr.add(query, text);
-        outText = ThreadMgr.getOutText();
+        text = ThreadMgr.getThread();
         UaLog.log(`Inizio Conversazione (${prompt.length},${text.length})`);
-      } catch (error) {
-        xerror(error);
-        outText = error;
-        throw error;
+      } catch (err) {
+        console.error(err);
+        text = `${err}`;
+        throw err;
       } finally {
-        outText = cleanOutput(outText);
-        return outText;
+        return text;
       }
     } else {
-      let outText = "";
       try {
         let context = this.ragContext;
         let thread = ThreadMgr.getThread();
         let prompt = "";
-        let text = "";
-        let decr = 0;
-
         while (true) {
-          thread = this.truncInput(thread, decr);
           prompt = promptThread(context, thread, query);
           const payload = getPayloadThread(prompt);
-
           try {
-            text = await HfRequest.post(payload);
+            text = await HfRequest.post(payload, TIMEOUT);
             if (!text) return "";
           } catch (err) {
-            const e = errorInfo(err);
-            if (e.errorType === ERROR_TOKENS) {
+            const ei = errorInfo(err);
+            if (ei.errorType === ERROR_TOKENS) {
               UaLog.log(`Error tokens.5  ${prompt.length}`);
-              xerror(`Error tokens.  ${prompt.length}`);
-              decr += PROMPT_DECR;
+              console.error(`Error tokens.  ${prompt.length}`);
+              thread = truncInput(thread, PROMPT_DECR);
               continue;
             } else {
-              xerror(err);
-              throw e.errorType;
+              console.error(err);
+              throw err;
             }
           }
           break;
         }
+        text = cleanResponse(text);
         ThreadMgr.add(query, text);
-        outText = ThreadMgr.getOutText();
+        text = ThreadMgr.getThread();
         UaLog.log(`Conversazione  (${prompt.length},${text.length})`);
-      } catch (error) {
-        alert("requestContext(2) \n" + error);
-        xerror(error);
-        outText = error;
-        throw error;
+      } catch (err) {
+        console.error(err);
+        text = `${err}`;
+        throw err;
       } finally {
-        outText = cleanOutput(outText);
-        return outText;
+        return text;
       }
     }
   },
@@ -326,25 +339,14 @@ const ThreadMgr = {
     this.rows.push(row);
     UaDb.saveArray(ID_THREAD, ThreadMgr.rows);
   },
-  getOutText() {
-    const rows = [];
-    for (const ua of this.rows) {
-      const u = ua[0].trim();
-      const a = ua[1].trim();
-      rows.push(`\n${USER}\n${u}\n${LLM}\n${a}\n\n`);
-    }
-    let text = rows.join("").trim();
-    return text;
-  },
   getThread() {
     const rows = [];
     for (const ua of this.rows) {
-      const u = ua[0].trim();
-      const a = ua[1].trim();
-      rows.push(`${USER}\n${u}\n${LLM}\n${a}\n\n`);
+      const u = ua[0];
+      const a = ua[1];
+      rows.push(`\n${USER}\n${u}\n${LLM}\n${a}\n`);
     }
-    const text = rows.join("").trim();
-    return text;
+    return rows.join("").trim();
   },
   isFirst() {
     return this.rows.length < 2;

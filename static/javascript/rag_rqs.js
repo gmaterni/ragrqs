@@ -19,7 +19,7 @@
  */
 
 "use strict";
-const VERS = "0.1.42 (08-08-2024)";
+const VERS = "0.1.43 (12-08-2024)";
 
 var xlog = console.log;
 var xerror = console.error;
@@ -72,7 +72,7 @@ function openApp() {
   Menu.init();
   TextInput.init();
   TextOutput.init();
-  Rag.init(); //AAA
+  Rag.init(); 
   document.querySelector(".menu-btn").checked = false;
   release();
 }
@@ -89,7 +89,6 @@ const op0 = async function (e) {
 
 //query iniziale
 function showQuery(e) {
-  // Rag.readFromDb(); XXX
   const txt = `\n${Rag.ragQuery}`;
   wnds.wpre.show(txt);
   // Menu.close();
@@ -97,15 +96,13 @@ function showQuery(e) {
 
 //Risposta Rsg
 function showRagResponse(e) {
-  // Rag.readFromDb(); XXX
   const txt = `\n${Rag.ragResponse}`;
   wnds.wpre.show(txt);
 }
 
 //conversazione
 function showThread(e) {
-  // Rag.readFromDb(); //XXX
-  const txt = ThreadMgr.getOutText();
+  const txt = ThreadMgr.getThread();
   wnds.wpre.show(txt);
 }
 
@@ -127,7 +124,6 @@ function elencoRisposte(e) {
 
 //contesto
 function showContesto(e) {
-  // Rag.readFromDb();XXX
   const txt = `${Rag.ragContext}`;
   wnds.wpre.show(txt);
 }
