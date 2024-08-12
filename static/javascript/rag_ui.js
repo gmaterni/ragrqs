@@ -175,7 +175,6 @@ const Menu = {
   },
 };
 
-
 const TextInput = {
   wnd: null,
   init() {
@@ -226,12 +225,12 @@ const TextInput = {
       this.inp.value = "";
       this.inp.focus();
     });
-    this.inp.addEventListener("keydown", (e) => this.handleEnter(e)); 
+    this.inp.addEventListener("keydown", (e) => this.handleEnter(e));
     document.querySelector(".send-input").addEventListener("click", () => this.send());
     document.querySelector(".send2-input").addEventListener("click", () => this.send2());
     document.querySelector(".clear-input").addEventListener("click", () => this.clear());
   },
-  handleEnter(e) { 
+  handleEnter(e) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       this.send2();
@@ -242,7 +241,7 @@ const TextInput = {
   // sala le risposte RAG
   // crea il contesto
   async send() {
-    const q=this.inp.value;
+    const q = this.inp.value;
     if (!q) {
       alert("Ricorda di scrivere la Query  ");
       return;
@@ -270,7 +269,7 @@ const TextInput = {
 
   // utiliza il contesto esistente
   async send2() {
-    const q=this.inp.value;
+    const q = this.inp.value;
     if (!q) {
       alert("Ricorda di scrivere la Query  ");
       return;
@@ -295,11 +294,15 @@ const TextInput = {
     hideSpinner();
   },
   clear() {
+    // let s = "messaggio di prova per vedere la massima larghezza";
+    // for (let i = 0; i < 40; i++) {
+    //   UaLog.log(s);
+    // }
     const ok = confirm("Confermi cancellazione conversazione? ");
     if (!ok) return;
     this.inp.value = "";
     setOutText("");
-    ThreadMgr.init(); 
+    ThreadMgr.init();
   },
 };
 

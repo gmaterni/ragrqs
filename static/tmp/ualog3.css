@@ -1,0 +1,61 @@
+/** @format */
+#ualog_ {
+  box-sizing: border-box;
+  width: auto;
+  height: auto;
+  text-align: center;
+  padding: 2px;
+  margin: 2px 0 0 0;
+  background: #333333;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: normal;
+  border-radius: 9px;
+  border: 1px solid #999999;
+}
+#ualog_ button {
+  padding: 5px;
+  margin: 0 5px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 2px solid #999999;
+  border-radius: 10px;
+}
+#ualog_ button:hover {
+  cursor: pointer;
+  color: #000000;
+}
+#ualog_ button.close {
+  background: #ff600a;
+  color: #000000;
+}
+#ualog_ button.close:hover {
+  background: #ffa270;
+  text-decoration: underline;
+}
+#ualog_ button.clear {
+  background: #aeab06;
+  color: #000000;
+}
+#ualog_ button.clear:hover {
+  background: #f7f423;
+  text-decoration: underline;
+}
+#ualog_ pre {
+  box-sizing: border-box;
+  width: auto;
+  min-width: 400px;
+  max-width: 400px;
+  max-height: 500px;
+  text-align: left;
+  font-size: 16px;
+  font-family: monospace;
+  padding: 2px;
+  margin: 2px 2px 2px 2px;
+  color: #ffffff;
+  background: #111111;
+  overflow: auto;
+  scrollbar-color: #23eb04 #454444;
+  scrollbar-width: auto;
+  word-wrap: break-word;
+}

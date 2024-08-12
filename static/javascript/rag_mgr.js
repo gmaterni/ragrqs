@@ -76,7 +76,7 @@ const Rag = {
   // risposta finale alla qury contetso
   ragResponse: "",
   responses: [],
-  answers: [],
+  contextAnswers: [],
   prompts: [],
   doc: "",
   doc_part: "",
@@ -132,14 +132,15 @@ const Rag = {
         let rgt = "";
         let text = "";
         let docAnswers = [];
+
         while (true) {
-          let partSize = getPartSize(doc, promptDoc("", query), decr);
+          let partSize = getPartSize(doc, promptDoc("", query, ""), decr);
           if (partSize < 10) {
             break;
           }
           [lft, rgt] = getPartDoc(doc, partSize);
           ragLog(`${ndoc},${npart + 1}`, lft.length, rgt.length, this.responses);
-          prompt = promptDoc(lft, query);
+          prompt = promptDoc(lft, query, docName);
           const payload = getPayloadDoc(prompt);
           try {
             text = await HfRequest.post(payload, TIMEOUT);
@@ -147,7 +148,7 @@ const Rag = {
           } catch (err) {
             const ei = errorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              UaLog.log(`Error tokens.1  ${lft.length}`);
+              UaLog.log(`Error tokens Doc  ${lft.length}`);
               console.error(`Error tokens. Doc ${prompt.length}`);
               decr += PROMPT_DECR;
               continue;
@@ -163,6 +164,7 @@ const Rag = {
           const s = `DOCUMENTO : ${docName}\n${text}`;
           this.responses.push(s);
         } // end while
+
         //implemntare build context
         let donAnsLen = 0;
         if (docAnswers == 1) {
@@ -182,7 +184,7 @@ const Rag = {
             } catch (err) {
               const ei = errorInfo(err);
               if (ei.errorType === ERROR_TOKENS) {
-                UaLog.log(`Error tokens.2  ${lft.length}`);
+                UaLog.log(`Error tokens build Context  ${lft.length}`);
                 console.error(`Error tokens buildContext. ${prompt.length}`);
                 text = truncInput(text, PROMPT_DECR);
                 continue;
@@ -197,34 +199,40 @@ const Rag = {
         UaLog.log(`context  ${donAnsLen} => ${text.length}`);
         text = cleanResponse(text);
         text = `DOCUMENTO: ${docName}\n ${text}`;
-        this.answers.push(text);
+        this.contextAnswers.push(text);
       } // end for document
     } catch (err) {
       console.error(err);
       throw err;
     }
     // costruzione context
-    this.ragContext = this.answers.join("\n");
+    this.ragContext = this.contextAnswers.join("\n");
     this.saveToDb();
+
     // query finale utilizza context
     {
       let text = "";
+      let context = this.ragContext;
       try {
-        let prompt = promptWithContext(this.ragContext, query);
-        const payload = getPayloadWithContext(prompt);
-        try {
-          text = await HfRequest.post(payload, TIMEOUT);
-          if (!text) return "";
-        } catch (err) {
-          const ei = errorInfo(err);
-          const et = errorToText(err);
-          if (ei.errorType === ERROR_TOKENS) {
-            console.error(err);
-            throw et;
-          } else {
-            console.error(err);
-            throw et;
+        while (true) {
+          let prompt = promptWithContext(context, query);
+          const payload = getPayloadWithContext(prompt);
+          try {
+            text = await HfRequest.post(payload, TIMEOUT);
+            if (!text) return "";
+          } catch (err) {
+            const ei = errorInfo(err);
+            if (ei.errorType === ERROR_TOKENS) {
+              UaLog.log(`Error tokens with COntext ${lft.length}`);
+              console.error(`Error tokens context. Doc ${prompt.length}`);
+              context = truncInput(context, PROMPT_DECR);
+              continue;
+            } else {
+              console.error(err);
+              throw err;
+            }
           }
+          break;
         }
         text = cleanResponse(text);
         this.ragResponse = text;
@@ -234,14 +242,15 @@ const Rag = {
         const pl = prompt.length;
         UaLog.log(`Risposta  (${pl},${text.length})`);
       } catch (err) {
-        text = `${err}`;
         console.error(err);
+        text = `${err}`;
         throw err;
       } finally {
         return text;
       }
     } // end query
   },
+  //////////////////////////
   // thread
   async requestContext(query) {
     let text = "";
@@ -253,22 +262,27 @@ const Rag = {
       ThreadMgr.init();
       try {
         let context = this.ragContext;
-        const thread = ThreadMgr.getThread();
-        prompt = promptThread(context, thread, query);
-        const payload = getPayloadThread(prompt);
-        try {
-          text = await HfRequest.post(payload, TIMEOUT);
-          if (!text) return "";
-        } catch (err) {
-          const ei = errorInfo(err);
-          if (ei.errorType === ERROR_TOKENS) {
-            UaLog.log(`Error tokens.4  ${prompt.length}`);
-            console.error(err);
-            throw err;
-          } else {
-            console.error(err);
-            throw err;
-          }
+        let thread = ThreadMgr.getThread();
+
+        while (true) {
+          prompt = promptThread(context, thread, query);
+          const payload = getPayloadThread(prompt);
+          try {
+            text = await HfRequest.post(payload, TIMEOUT);
+            if (!text) return "";
+          } catch (err) {
+            const ei = errorInfo(err);
+            if (ei.errorType === ERROR_TOKENS) {
+              UaLog.log(`Error tokens Thread Init  ${prompt.length}`);
+              console.error(`Error tokens Thread Init.  ${prompt.length}`);
+              thread = truncInput(thread, PROMPT_DECR);
+              continue;
+            } else {
+              console.error(err);
+              throw err;
+            }
+          } //end catch
+          break;
         }
         text = cleanResponse(text);
         ThreadMgr.add(query, text);
@@ -295,8 +309,8 @@ const Rag = {
           } catch (err) {
             const ei = errorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              UaLog.log(`Error tokens.5  ${prompt.length}`);
-              console.error(`Error tokens.  ${prompt.length}`);
+              UaLog.log(`Error tokens Thread  ${prompt.length}`);
+              console.error(`Error tokens Thread.  ${prompt.length}`);
               thread = truncInput(thread, PROMPT_DECR);
               continue;
             } else {
