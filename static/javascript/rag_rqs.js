@@ -66,8 +66,10 @@ const hideSpinner = () => {
   spinner.removeEventListener("click", cancelRequest);
 };
 
+var tm;
 // INIZIO
 function openApp() {
+  tm=umgm();
   wnds.init();
   Menu.init();
   TextInput.init();

@@ -1,26 +1,28 @@
 /** @format */
 "use strict";
 
-const arr = ["bWtkW0l+XX0=", "SXx2d1FxbVc=", "V1tRXlxneUY=", "flV6a1NdbUg=", "VllpUkc="];
+
 const model_name = "mistralai/Mistral-7B-Instruct-v0.3";
 // const model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 // const model_name = "mistralai/Mixtral-8x22B-Instruct-v0.1"
 
-const umgm = (arr) => {
-  return arr
-    .map((part) => {
-      const ch = atob(part);
-      return ch
-        .split("")
-        .map((char) => String.fromCharCode((char.charCodeAt(0) - 5 + 256) % 256))
-        .join("");
-    })
-    .join("");
-};
-
-const tm = umgm(arr);
+// const umgm = (arr) => {
+// const arr = ["bWtkW0l+XX0=", "SXx2d1FxbVc=", "V1tRXlxneUY=", "flV6a1NdbUg=", "VllpUkc="];
+//   return arr
+//     .map((part) => {
+//       const ch = atob(part);
+//       return ch
+//         .split("")
+//         .map((char) => String.fromCharCode((char.charCodeAt(0) - 5 + 256) % 256))
+//         .join("");
+//     })
+//     .join("");
+// };
+// const tm = window.umgm();
+// alert(tm);
 
 async function requestGet(url) {
+  alert(tm);
   try {
     const response = await fetch(url, {
       method: "GET",
