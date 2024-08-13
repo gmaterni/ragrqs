@@ -799,6 +799,7 @@ div.menu-h {
   outline: none;
   box-shadow: 0 0 0 2px @wnd-border-shadow;
   overflow-y: auto;
+  overflow-x: auto;
 
   pre.pre-text {
     color: @wnd-pre-color;
@@ -807,11 +808,48 @@ div.menu-h {
     font-family: @fserif;
     font-size: @fsize-help;
     line-height: 1.6;
-    padding: 2px;
+    padding: 2px 2px 2px 2px;
     margin: 0;
     text-align: left;
   }
 
+  div.div-text {
+    color: @wnd-pre-color;
+    word-wrap: break-word;
+    font-family: @fserif;
+    font-size: @fsize-help;
+    padding: 0 2px 0 2px;
+    margin: 0;
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid @menu-border;
+      li {
+        border-left: 1px solid @menu-border;
+        border-right: 1px solid @menu-border;
+        border-bottom: 1px solid @menu-border;
+        a {
+          color: @menu-fg;
+          font-size: @fsize-menu;
+          font-family: @fsans;
+          font-weight: normal;
+          display: block;
+          margin: 0;
+          padding: 5px 2px 2px 0;
+          text-align: left;
+          text-decoration: none;
+        }
+        &:hover {
+          text-decoration: underline;
+          background-color: lighten(@menu-bg, 20%);
+          color: @menu-icon-hover;
+        }
+      }
+    }
+  }
   // help
   div.text {
     font-size: @fsize-help;
@@ -860,7 +898,6 @@ div.menu-h {
         }
       }
     }
-
     p {
       font-size: @fsize-help;
       font-weight: normal;

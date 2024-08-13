@@ -5,8 +5,7 @@ const ID_RESPONSES = "id_responses";
 const ID_DOC_NAMES = "id_doc_names";
 const ID_DOCS = "id_docs;";
 const ID_RAG = "id_rag";
-const ID_THREAD="id_thread";
-
+const ID_THREAD = "id_thread";
 
 const UaDb = {
   create(id, data) {
@@ -78,10 +77,15 @@ const DataMgr = {
     return parts[parts.length - 1];
   },
   async loadDoc(link) {
+    this.readDbDocNames();
     try {
       const text = await requestGet(link);
       const doc = cleanDoc(text);
       const name = this.linkToName(link);
+      if (this.doc_names.includes(name)) {
+        alert(`Il docuento ${name} è già caricato`);
+        return;
+      }
       this.doc_names.push(name);
       this.docs.push(doc);
       this.saveDbDocs();

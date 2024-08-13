@@ -19,7 +19,7 @@
  */
 
 "use strict";
-const VERS = "0.1.44 (13-08-2024)";
+const VERS = "0.1.45 (14-08-2024)";
 
 var xlog = console.log;
 var xerror = console.error;
@@ -69,12 +69,12 @@ const hideSpinner = () => {
 var tm;
 // INIZIO
 function openApp() {
-  tm=umgm();
+  tm = umgm();
   wnds.init();
   Menu.init();
   TextInput.init();
   TextOutput.init();
-  Rag.init(); 
+  Rag.init();
   document.querySelector(".menu-btn").checked = false;
   release();
 }
@@ -144,11 +144,35 @@ function elencoDati(e) {
 }
 
 //elenco documenti in memoria
-async function elencoDocs(e) {
+// function elencoDocs(e) {
+//   DataMgr.readDbDocNames();
+//   const arr = DataMgr.doc_names;
+//   const s = arr.join("\n");
+//   wnds.wpre.show(s);
+// }
+
+//visualizza docuemnto
+const showT = (n) => {
+  const arr = DataMgr.docs;
+  const s = arr[n];
+  wnds.wpre.show(s);
+};
+
+// elenco e visualizzazione documenti
+function elencoDocs() {
+  DataMgr.readDbDocs();
   DataMgr.readDbDocNames();
   const arr = DataMgr.doc_names;
-  const s = arr.join("\n");
-  wnds.wpre.show(s);
+  const fh = (x,i) => `
+      <li><a href="#" onCLick="showT(${i});">${i + 1}.${x}</a></li>
+  `;
+  const jfh = UaJtfh();
+  let i = 0;
+  jfh.append("<ul>");
+  for (const x of arr) jfh.append(fh(x, i++));
+  jfh.append("</ul>");
+  const t = jfh.html();
+  wnds.wdiv.show(`<br><br>${t}`);
 }
 
 //calcolo query
@@ -177,6 +201,7 @@ function calcQuery() {
   const s = calc();
   wnds.wpre.show(s);
 }
+
 
 //cancella dati
 function deleteDati(e) {
@@ -236,10 +261,3 @@ function showPrompts(e) {
   wnds.wpre.show(text);
 }
 
-//testi
-function showTesti(e) {
-  DataMgr.readDbDocs();
-  const arr = DataMgr.docs;
-  const s = arr.join("\n");
-  wnds.wpre.show(s);
-}
