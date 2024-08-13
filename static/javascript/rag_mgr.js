@@ -239,8 +239,7 @@ const Rag = {
         this.saveRespToDb();
         ThreadMgr.init();
         this.saveToDb();
-        const pl = prompt.length;
-        UaLog.log(`Risposta  (${pl},${text.length})`);
+        UaLog.log(`Risposta  (${text.length})`);
       } catch (err) {
         console.error(err);
         text = `${err}`;
@@ -287,7 +286,7 @@ const Rag = {
         text = cleanResponse(text);
         ThreadMgr.add(query, text);
         text = ThreadMgr.getThread();
-        UaLog.log(`Inizio Conversazione (${prompt.length},${text.length})`);
+        UaLog.log(`Inizio Conversazione (${prompt.length})`);
       } catch (err) {
         console.error(err);
         text = `${err}`;
@@ -323,7 +322,7 @@ const Rag = {
         text = cleanResponse(text);
         ThreadMgr.add(query, text);
         text = ThreadMgr.getThread();
-        UaLog.log(`Conversazione  (${prompt.length},${text.length})`);
+        UaLog.log(`Conversazione  (${prompt.length})`);
       } catch (err) {
         console.error(err);
         text = `${err}`;
