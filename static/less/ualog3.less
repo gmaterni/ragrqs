@@ -1,9 +1,11 @@
 /** @format */
+@color1: #ff4500;
+@color3: #e3d50e;
 
 #ualog_ {
   box-sizing: border-box;
   width: auto;
-//   min-width: 300px;
+  //   min-width: 300px;
   height: auto;
   text-align: center;
   padding: 2px;
@@ -22,26 +24,25 @@
     font-weight: bold;
     border: 2px solid #888888;
     border-radius: 10px;
+    color: #000000;
 
     &:hover {
       cursor: pointer;
-      color: #000000;
+      text-decoration: underline;
     }
   }
   button.close {
-    background: #000000;
-    color: #ff4500;
+    background: lighten(@color1, -10%);
     &:hover {
-      text-decoration: underline;
-      border-color: #ff4500;
+      background: lighten(@color1, 20%);
+      border-color: darken(@color1, 20%);
     }
   }
   button.clear {
-    background: #000000;
-    color: yellow;
+    background: lighten(@color3, -10%);
     &:hover {
-      text-decoration: underline;
-      border-color: yellow;
+      background: lighten(@color3, 20%);
+      border-color: darken(@color3, 20%);
     }
   }
 

@@ -5,10 +5,12 @@
 function promptDoc(documento, domanda, docName) {
   return `
 SYSTEM:
-Sei un assistente AI specializzato nell'analisi di documenti.Rispondi sempre ed esclusivamente in italiano.
+- Sei un assistente AI specializzato nell'analisi di documenti.
+- Rispondi sempre ed esclusivamente in italiano.
 
 TASK:
-Analizzare il documento ${docName} ed estrarre le informazioni rilevanti per rispondere alla domanda fornita.
+- Analizza il documento fornito ed estrai le informazioni rilevanti per rispondere alla domanda fornita.
+- Attieniti rigorosamente alle istruzioni.
 
 INSTRUCTIONS:
 1. Analizza attentamente il documento fornito e identifica le informazioni pertinenti alla domanda.
@@ -20,12 +22,12 @@ INSTRUCTIONS:
 7. Assicurati che la risposta sia interamente in italiano,se nel testo è usata un'altra lingua traduci in italiano.
 8. Mantieni un tono oggettivo e uno stile fluido e coerente.
 
-DOCUMENT:
-<<<BEGIN_DOCUMENT>>>
+DOCUMENTO:
+<<<INIZIO DOCUMENTO ${docName}>>>
 ${documento}
-<<<END_DOCUMENT>>>
+<<<FINE DOCUMENTO>>>
 
-QUESTION:
+DOMANDA:
 ${domanda}
 
 OUTPUT_FORMAT:
@@ -35,13 +37,15 @@ RESPONSE:
   `;
 }
 
-function promptBuildContext(document) {
+function promptBuildContext(documento) {
   return `
-  SYSTEM:
-Sei un assistente AI specializzato nell'analisi di documenti.Rispondi sempre ed esclusivamente in italiano.
+SYSTEM:
+- Sei un assistente AI specializzato nell'analisi di documenti. 
+- Rispondi sempre ed esclusivamente in italiano.
 
 TASK:
-Analizza e riorganizza logicamente il documento fornito. Attieniti rigorosamente alle istruzioni.
+- Analizza e riorganizza logicamente il documento fornito. 
+- Attieniti rigorosamente alle istruzioni.
 
 INSTRUCTIONS:
 1. Valuta la tipologia e lo scopo del documento (es. articolo scientifico, racconto,saggio, documento tecnico) e adatta l'analisi di conseguenza.
@@ -60,10 +64,10 @@ INSTRUCTIONS:
 14. Assicurati che la risposta sia interamente in italiano.
 15. Mantieni un tono oggettivo e uno stile fluido e coerente.
 
-DOCUMENT:
-<<<BEGIN_DOCUMENT>>>
-${document}
-<<<END_DOCUMENT>>>
+DOCUMENTO:
+<<<INIZIO_DOCUMENTO>>>
+${documento}
+<<<FINE_DOCUMENTO>>>
 
 OUTPUT_FORMAT:
 Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Evita di  usare etichette, elenchi o marcatori speciali.
@@ -75,10 +79,11 @@ RESPONSE:
 function promptWithContext(contesto, domanda) {
   return `
 SYSTEM:
-Sei un assistente AI specializzato nell'analisi e nell'elaborazione di informazioni contestuali. Rispondi sempre in italiano.
+- Sei un assistente AI specializzato nell'analisi e nell'elaborazione di informazioni contestuali. 
+- Rispondi sempre ed esclusivamente in italiano.
 
 TASK:
-Elaborare la risposta alla domanda sulla base del contesto fornito.
+Elabora la risposta alla domanda sulla base del contesto fornito.
 
 INSTRUCTIONS:
 1. Analizza attentamente il documento e identifica le informazioni pertinenti alla domanda.
@@ -90,12 +95,12 @@ INSTRUCTIONS:
 7. Assicurati che la risposta sia interamente in italiano.
 8. Mantieni un tono oggettivo e uno stile fluido e coerente.
 
-CONTEXT:
-<<<BEGIN_CONTEXT>>>
+CONTESTO:
+<<<INIZIO_CONTESTO>>>
 ${contesto}
-<<<END_CONTEXT>>>
+<<<FINE_CONTESTO>>>
 
-QUESTION:
+DOMANDA:
 ${domanda}
 
 OUTPUT_FORMAT:
@@ -108,10 +113,11 @@ RESPONSE:
 function promptThread(contesto, conversazione, richiesta) {
   return `
 SYSTEM:
-Sei un assistente AI versatile progettato per gestire conversazioni dinamiche e adattarti a varie richieste. Rispondi sempre in italiano.
+- Sei un assistente AI versatile progettato per gestire conversazioni dinamiche e adattarti a varie richieste. 
+- Rispondi sempre in italiano.
 
 TASK:
-Elaborare la risposta alla domanda sulla base del contesto fornito e della conversazione.
+Elaborare la risposta alla richista sulla base del contesto fornito e della conversazione.
 
 INSTRUCTIONS:
 1. Analizza attentamente il contesto, la conversazione precedente e la richiesta attuale.
@@ -126,16 +132,17 @@ INSTRUCTIONS:
 10. Se è necessario integrare con conoscenze generali, specifica chiaramente quando lo stai facendo.
 11. Assicurati che la risposta sia interamente in italiano.
 
-CONTEXT:
-<<<BEGIN_CONTEXT>>>
+CONTESTO:
+<<<INIZIO_CONTESTO>>>
 ${contesto}
-<<<END_CONTEXT>>>
+<<<FINE_CONTESTO>>>
 
-<<<BEGIN_CONVERSATION>>>
+CONVERSAZIONE:
+<<<INIZIO_CONVERSAZIONE>>>
 ${conversazione}
-<<<END_CONVERSATION>>>
+<<<FINE_CONVERSAZIONE>>>
 
-REQUEST:
+RICHIESTA:
 ${richiesta}
 
 OUTPUT_FORMAT:
@@ -243,7 +250,7 @@ function getPayloadBuildContext(prompt) {
       return_full_text: false,
       details: false,
       max_time: 120.0,
-      seed: 42
+      seed: 42,
     },
     options: {
       use_cache: false,
