@@ -97,7 +97,7 @@ const Rag = {
     const js = UaDb.readJson(ID_RAG);
     this.ragContext = js.context || "";
     this.ragQuery = js.ragquery || "";
-    this.ragAnswer = js.ragranswer || "";
+    this.ragAnswer = js.raganswer || "";
     ThreadMgr.rows = UaDb.readArray(ID_THREAD);
   },
   saveRespToDb() {
@@ -161,7 +161,7 @@ const Rag = {
           doc = rgt;
           answer = cleanResponse(answer);
           docAnswersLst.push(answer);
-          const s = `DOCUMENTO : ${docName}\n${answer}`;
+          const s = `DOCUMENTO : ${docName}_${npart}\n${answer}`;
           this.answers.push(s);
         } // end while
 

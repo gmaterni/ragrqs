@@ -118,8 +118,8 @@ const DataMgr = {
     }
     Rag.ragQuery = "";
     Rag.ragContext = "";
-    Rag.ragResponse = "";
-    Rag.responses = [];
+    Rag.ragAnswer = "";
+    Rag.answers= [];
     Rag.prompts = [];
     ThreadMgr.rows = [];
   },

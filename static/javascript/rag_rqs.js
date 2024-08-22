@@ -98,7 +98,7 @@ function showQuery(e) {
 
 //Risposta Rsg
 function showRagResponse(e) {
-  const txt = `\n${Rag.ragResponse}`;
+  const txt = `\n${Rag.ragAnswer}`;
   wnds.wpre.show(txt);
 }
 
@@ -110,7 +110,7 @@ function showThread(e) {
 
 //elenco risposte
 function elencoRisposte(e) {
-  let rs = [...Rag.responses];
+  let rs = [...Rag.answers];
   if (rs.length == 0) {
     rs = UaDb.readArray(ID_RESPONSES);
   }
