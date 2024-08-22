@@ -57,9 +57,9 @@ const getPartDoc = (pRgt, partSize) => {
   return [pLft, pRgt];
 };
 
-const ragLog = (msg, lftLen, rgtLen, responses) => {
+const ragLog = (msg, lftLen, rgtLen, answers) => {
   const maxl = MAX_PROMPT_LENGTH;
-  const rspsl = responses.reduce((acc, cur) => {
+  const rspsl = answers.reduce((acc, cur) => {
     return acc + cur.length;
   }, 0);
   let s = `${msg} mx:${maxl} lft:${lftLen} rgt:${rgtLen} arr:${rspsl}`;
@@ -74,9 +74,9 @@ const Rag = {
   //query usata per creare la lista delle rispste
   ragQuery: "",
   // risposta finale alla qury contetso
-  ragResponse: "",
-  responses: [],
-  contextAnswers: [],
+  ragAnswer: "",
+  answers: [],
+  docContextLst: [],
   prompts: [],
   doc: "",
   doc_part: "",
@@ -88,7 +88,7 @@ const Rag = {
     const js = {
       context: this.ragContext,
       ragquery: this.ragQuery,
-      ragresponse: this.ragResponse,
+      raganswer: this.ragAnswer,
     };
     UaDb.saveJson(ID_RAG, js);
     UaDb.saveArray(ID_THREAD, ThreadMgr.rows);
@@ -97,14 +97,14 @@ const Rag = {
     const js = UaDb.readJson(ID_RAG);
     this.ragContext = js.context || "";
     this.ragQuery = js.ragquery || "";
-    this.ragResponse = js.ragresponse || "";
+    this.ragAnswer = js.ragranswer || "";
     ThreadMgr.rows = UaDb.readArray(ID_THREAD);
   },
   saveRespToDb() {
-    UaDb.saveArray(ID_RESPONSES, this.responses);
+    UaDb.saveArray(ID_RESPONSES, this.answers);
   },
   readRespsFromDb() {
-    this.responses = UaDb.readArray(ID_RESPONSES);
+    this.answers = UaDb.readArray(ID_RESPONSES);
   },
   // addPrompt(p) {
   //   this.prompts.push(p);
@@ -130,8 +130,8 @@ const Rag = {
         let prompt = "";
         let lft = "";
         let rgt = "";
-        let text = "";
-        let docAnswers = [];
+        let answer = "";
+        let docAnswersLst = [];
 
         while (true) {
           let partSize = getPartSize(doc, promptDoc("", query, ""), decr);
@@ -139,12 +139,12 @@ const Rag = {
             break;
           }
           [lft, rgt] = getPartDoc(doc, partSize);
-          ragLog(`${ndoc},${npart + 1}`, lft.length, rgt.length, this.responses);
+          ragLog(`${ndoc},${npart + 1}`, lft.length, rgt.length, this.answers);
           prompt = promptDoc(lft, query, docName);
           const payload = getPayloadDoc(prompt);
           try {
-            text = await HfRequest.post(payload, TIMEOUT);
-            if (!text) return "";
+            answer = await HfRequest.post(payload, TIMEOUT);
+            if (!answer) return "";
           } catch (err) {
             const ei = errorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
@@ -156,70 +156,62 @@ const Rag = {
               console.error(err);
               throw err;
             }
-          }
+          } //end catch
           npart++;
           doc = rgt;
-          text = cleanResponse(text);
-          docAnswers.push(text);
-          const s = `DOCUMENTO : ${docName}\n${text}`;
-          this.responses.push(s);
+          answer = cleanResponse(answer);
+          docAnswersLst.push(answer);
+          const s = `DOCUMENTO : ${docName}\n${answer}`;
+          this.answers.push(s);
         } // end while
 
         //implemntare build context
-        let donAnsLen = 0;
-        if (docAnswers == 1) {
-          //il docuento non è duvuso in parti
-          text = docAnswers[0];
-          donAnsLen = text.length;
-        } else {
-          //il documento è diviso in parto
-          text = docAnswers.join("\n");
-          donAnsLen = text.length;
-          while (true) {
-            prompt = promptBuildContext(text);
-            const payload = getPayloadBuildContext(prompt);
-            try {
-              text = await HfRequest.post(payload, TIMEOUT);
-              if (!text) return "";
-            } catch (err) {
-              const ei = errorInfo(err);
-              if (ei.errorType === ERROR_TOKENS) {
-                UaLog.log(`Error tokens build Context  ${lft.length}`);
-                console.error(`Error tokens buildContext. ${prompt.length}`);
-                text = truncInput(text, PROMPT_DECR);
-                continue;
-              } else {
-                console.error(err);
-                throw err;
-              }
+        const docAnswersLen = docAnswersLst.length;
+        let docAnswresTxt = docAnswersLst.join("\n\n"); //AAA
+        let docContext = "";
+        while (true) {
+          prompt = promptBuildContext(docAnswresTxt, this.ragQuery);
+          const payload = getPayloadBuildContext(prompt);
+          try {
+            docContext = await HfRequest.post(payload, TIMEOUT);
+            if (!docContext) return "";
+          } catch (err) {
+            const ei = errorInfo(err);
+            if (ei.errorType === ERROR_TOKENS) {
+              UaLog.log(`Error tokens build Context  ${lft.length}`);
+              console.error(`Error tokens buildContext. ${prompt.length}`);
+              docContext = truncInput(docContext, PROMPT_DECR);
+              continue;
+            } else {
+              console.error(err);
+              throw err;
             }
-            break;
-          } //end while
-        } //end else
-        UaLog.log(`context  ${donAnsLen} => ${text.length}`);
-        text = cleanResponse(text);
-        text = `DOCUMENTO: ${docName}\n ${text}`;
-        this.contextAnswers.push(text);
+          }
+          break;
+        } //end while
+        UaLog.log(`context  ${docAnswersLen} => ${docContext.length}`);
+        docContext = cleanResponse(docContext);
+        docContext = `\n### DOCUMENTO: ${docName}\n ${docContext}`;
+        this.docContextLst.push(docContext);
       } // end for document
     } catch (err) {
       console.error(err);
       throw err;
     }
-    // costruzione context
-    this.ragContext = this.contextAnswers.join("\n");
+    this.ragContext = this.docContextLst.join("\n\n");
     this.saveToDb();
 
     // query finale utilizza context
     {
-      let text = "";
+      let answer = "";
       let context = this.ragContext;
       try {
         while (true) {
           let prompt = promptWithContext(context, query);
           const payload = getPayloadWithContext(prompt);
           try {
-            text = await HfRequest.post(payload, TIMEOUT);
-            if (!text) return "";
+            answer = await HfRequest.post(payload, TIMEOUT);
+            if (!answer) return "";
           } catch (err) {
             const ei = errorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
@@ -234,18 +226,18 @@ const Rag = {
           }
           break;
         }
-        text = cleanResponse(text);
-        this.ragResponse = text;
+        answer = cleanResponse(answer);
+        this.ragAnswer = answer;
         this.saveRespToDb();
         ThreadMgr.init();
         this.saveToDb();
-        UaLog.log(`Risposta  (${text.length})`);
+        UaLog.log(`Risposta  (${this.ragAnswer.length})`);
       } catch (err) {
         console.error(err);
-        text = `${err}`;
+        answer = `${err}`;
         throw err;
       } finally {
-        return text;
+        return answer;
       }
     } // end query
   },
@@ -341,8 +333,8 @@ const ThreadMgr = {
   rows: [],
   init() {
     this.rows = [];
-    if (!!Rag.ragResponse) {
-      this.add(Rag.ragQuery, Rag.ragResponse);
+    if (!!Rag.ragAnswer) {
+      this.add(Rag.ragQuery, Rag.ragAnswer);
     } else {
       this.add("", "");
     }

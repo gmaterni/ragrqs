@@ -19,7 +19,7 @@
  */
 
 "use strict";
-const VERS = "0.1.45 (14-08-2024)";
+const VERS = "0.1.46 (22-08-2024)";
 
 var xlog = console.log;
 var xerror = console.error;
@@ -67,7 +67,7 @@ const hideSpinner = () => {
 };
 
 var tm;
-// INIZIO
+
 function openApp() {
   tm = umgm();
   wnds.init();

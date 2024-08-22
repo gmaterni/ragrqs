@@ -111,7 +111,6 @@ const WndDiv = (id) => {
   };
 };
 
-//TODO 
 const wnds = {
   wdiv: null,
   wpre: null,
@@ -130,7 +129,6 @@ const wnds = {
 
 const Menu = {
   init() {
-    // gestione menu
     const btn = document.querySelector("#id-menu-btn");
     btn.addEventListener("change", () => {
       document.querySelector("body").classList.toggle("menu-open", btn.checked);

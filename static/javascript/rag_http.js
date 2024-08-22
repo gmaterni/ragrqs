@@ -1,7 +1,6 @@
 /** @format */
 "use strict";
 
-
 const model_name = "mistralai/Mistral-7B-Instruct-v0.3";
 // const model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 // const model_name = "mistralai/Mixtral-8x22B-Instruct-v0.1"
@@ -128,15 +127,24 @@ const HfRequest = {
 };
 
 function errorInfo(err) {
-  const js = JSON.parse(err.message);
-  return js;
+  let js = {};
+  try {
+    js = JSON.parse(err.message);
+    return js;
+  } catch (err) {
+    console.error(err);
+    js = {};
+    throw err;
+  } finally {
+    return js;
+  }
 }
 
-function errorToText(err) {
-  const j = JSON.parse(err.message);
-  return `Error:
-    Status: ${j.status}
-    Status Text: ${j.statusText}
-    Error Type: ${j.errorType}
-    Message: ${j.message}`;
-}
+// function errorToText(err) {
+//   const j = JSON.parse(err.message);
+//   return `Error:
+//     Status: ${j.status}
+//     Status Text: ${j.statusText}
+//     Error Type: ${j.errorType}
+//     Message: ${j.message}`;
+// }

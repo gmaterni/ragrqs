@@ -4,73 +4,80 @@
 
 function promptDoc(documento, domanda, docName) {
   return `
-SYSTEM:
-- Sei un assistente AI specializzato nell'analisi di documenti.
-- Rispondi sempre ed esclusivamente in italiano.
+SYSTEM: Sei un assistente AI specializzato nell'analisi di documenti. Rispondi ESCLUSIVAMENTE in italiano. Non usare altre lingue in nessuna parte della risposta.
 
-TASK:
-- Analizza il documento fornito ed estrai le informazioni rilevanti per rispondere alla domanda fornita.
-- Attieniti rigorosamente alle istruzioni.
+TASK: Analizza il documento ${docName} ed estrai le informazioni rilevanti per rispondere alla domanda fornita.
 
 INSTRUCTIONS:
-1. Analizza attentamente il documento fornito e identifica le informazioni pertinenti alla domanda.
-2. Estrai i concetti chiave e fai inferenze ragionevoli.
-3. Organizza le informazioni in modo logico.
-4. Prepara una risposta chiara e completa.
-5. Includi un'introduzione breve, sviluppa l'analisi, presenta le inferenze e concludi con una sintesi.
-6. Cita le fonti quando è utile per chiarire informazioni o inferenze.
-7. Assicurati che la risposta sia interamente in italiano,se nel testo è usata un'altra lingua traduci in italiano.
-8. Mantieni un tono oggettivo e uno stile fluido e coerente.
-
-DOCUMENTO:
-<<<INIZIO DOCUMENTO ${docName}>>>
-${documento}
-<<<FINE DOCUMENTO>>>
-
-DOMANDA:
-${domanda}
-
-OUTPUT_FORMAT:
-Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Evita di usare etichette, introduzioni, elenchi o marcatori speciali.
-
-RESPONSE:
-  `;
-}
-
-function promptBuildContext(documento) {
-  return `
-SYSTEM:
-- Sei un assistente AI specializzato nell'analisi di documenti. 
-- Rispondi sempre ed esclusivamente in italiano.
-
-TASK:
-- Analizza e riorganizza logicamente il documento fornito. 
-- Attieniti rigorosamente alle istruzioni.
-
-INSTRUCTIONS:
-1. Valuta la tipologia e lo scopo del documento (es. articolo scientifico, racconto,saggio, documento tecnico) e adatta l'analisi di conseguenza.
-2. Analizza attentamente il documento e identifica i temi principali e i concetti chiave.
+1. Identifica la tipologia e lo scopo del documento (es. articolo scientifico, racconto, saggio, documento tecnico) e adatta l'analisi di conseguenza.
+2. Analizza attentamente il documento fornito e identifica le informazioni pertinenti alla domanda.
 3. Estrai i concetti chiave e fai inferenze ragionevoli.
-4. Organizza le informazioni in una struttura logica e coerente, eliminando ridondanze e ripetizioni.
-5. Prepara una risposta che riorganizzi i contenuti, dando priorità alle informazioni più importanti o rilevanti.
-6. Includi un'introduzione breve che presenti i temi principali.
-7. Sviluppa l'analisi raggruppando le informazioni per argomenti correlati.
-8. Presenta le inferenze e le connessioni tra i diversi concetti.
-9. Se presenti informazioni contrastanti, evidenziale senza eliminarle.
-10. Includi, se rilevanti, dettagli specifici come nomi propri, termini tecnici, date o luoghi che contribuiscono alla precisione del contesto.
-11. Concludi con una sintesi che riassuma i punti chiave e la struttura logica.
-12. Se il documento contiene sezioni distinte, analizzale separatamente ma evidenzia le connessioni tra di esse.
-13. Effettua un controllo finale per assicurarti che tutte le informazioni chiave siano state incluse.
-14. Assicurati che la risposta sia interamente in italiano.
-15. Mantieni un tono oggettivo e uno stile fluido e coerente.
+3. Focalizzati sull'estrazione di concetti chiave e inferenze rilevanti per la domanda.
+4. Seleziona citazioni specifiche direttamente collegate alla domanda.
+5. Prepara una risposta chiara e dettagliata.
+6. Inizia con una breve introduzione, sviluppa l'analisi, esponi le inferenze e concludi con una sintesi.
+7. Cita le fonti quando è utile per chiarire informazioni o inferenze.
+8. Se trovi contenuti in altre lingue nel documento, traducili in italiano prima di includerli nella risposta.
+9. Mantieni un tono oggettivo e uno stile fluido e coerente.
 
 DOCUMENTO:
 <<<INIZIO_DOCUMENTO>>>
 ${documento}
 <<<FINE_DOCUMENTO>>>
 
+DOMANDA:
+${domanda}
+
 OUTPUT_FORMAT:
-Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Evita di  usare etichette, elenchi o marcatori speciali.
+La risposta dovrà essere strutturata nel seguente modo:
+- Introduzione:
+- Concetti chiav:e
+- Citazioni:
+- Inferenze:
+- Dettagli rilevanti:
+- Conclusione:
+
+RESPONSE:
+`;
+}
+
+function promptBuildContext(informazioni, domanda) {
+  return `
+SYSTEM: Sei un assitente AI specializzato nella riorganizzazione di informazioni come contesto nelle interrogazioni ad un LLM.
+
+TASK: Analizza e riorganizza le informazioi rilevanti per rispondere alla domada  fornite seguendo le istruzioni.
+
+INSTRUCTIONS:
+1. Analizza attentamente le informazioi e identifica i temi  e i concetti pertinenti  alla domanda.
+2. Estrai i concetti chiave e fai inferenze ragionevoli.
+3. Organizza le informazioni in una struttura logica e coerente.
+4. Prepara una risposta che riorganizzi i contenuti, dando priorità alle informazioni più importanti o rilevanti.
+5. Includi una breve introduzione che presenti i temi principali.
+6. Sviluppa l'analisi raggruppando le informazioni per argomenti correlati.
+7. Presenta le inferenze e le connessioni tra i diversi concetti.
+8. Includi, se rilevanti, dettagli specifici come nomi propri, termini tecnici, date o luoghi che contribuiscono alla precisione del contesto.
+9. Concludi con una sintesi che riassuma i punti chiave e la struttura logica.
+10. Evidenzia le connessioni tra contenuti estratti da fonti diverse.
+11. Effettua un controllo finale per assicurarti che tutte le informazioni chiave siano state incluse.
+12. Mantieni un tono oggettivo e uno stile fluido e coerente.
+
+INFORAZIONI:
+<<<INIZIO_INFORMAZIONI>>>
+${informazioni}
+<<<FINE_INFORMAZIONI>>>
+
+DOMANDA:
+${domanda}
+
+OUTPUT_FORMAT:
+La risposta dovrà essere strutturata nel seguente modo:
+- Introduzione:
+- Concetti chiav:e
+- Citazioni:
+- Inferenze:
+- Connessioni fra contenuti:
+- Dettagli rilevanti:
+- Conclusione:
 
 RESPONSE:
 `;
@@ -78,22 +85,17 @@ RESPONSE:
 
 function promptWithContext(contesto, domanda) {
   return `
-SYSTEM:
-- Sei un assistente AI specializzato nell'analisi e nell'elaborazione di informazioni contestuali. 
-- Rispondi sempre ed esclusivamente in italiano.
+SYSTEM: Sei un sistema AI specializzato nell'analisi semantica di informazioni estratte da documenti.  Rispondi sempre ed esclusivamente in italiano.
 
-TASK:
-Elabora la risposta alla domanda sulla base del contesto fornito.
+TASK: Elabora la risposta alla domanda sulla base del contesto fornito.
 
 INSTRUCTIONS:
-1. Analizza attentamente il documento e identifica le informazioni pertinenti alla domanda.
+1. Analizza attentamente il contestoo e identifica le informazioni pertinenti alla domanda.
 2. Estrai i concetti chiave e fai inferenze ragionevoli.
-3. Prepara una risposta chiara e completa.
-4. Struttura la risposta in paragrafi logici.
-5. Includi un'introduzione breve, sviluppa l'analisi, presenta le inferenze e concludi con una sintesi.
-6. Se la domanda richiede di citare le fonti, fai riferimento al documento fornito distinguendolo chiaramente da eventuali altre fonti citate all'interno del documento stesso.
-7. Assicurati che la risposta sia interamente in italiano.
-8. Mantieni un tono oggettivo e uno stile fluido e coerente.
+3. Prepara una risposta chiara e dettagliata utilizzandoo al meglio il contesto.
+4. Inizia con una breve introduzione, sviluppa l'analisi, elabora le inferenze e concludi con una sintesi.
+5. Se la domanda richiede di citare le fonti, fai riferimento al documento fornito distinguendolo chiaramente da eventuali altre fonti citate all'interno del contesto stesso.
+6. Mantieni un tono oggettivo e uno stile fluido e coerente.
 
 CONTESTO:
 <<<INIZIO_CONTESTO>>>
@@ -104,20 +106,17 @@ DOMANDA:
 ${domanda}
 
 OUTPUT_FORMAT:
-Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Non usare etichette, introduzioni, elenchi o marcatori speciali.
+Rispondi con un testo piano suddiviso in paragrafi.Evita di usare etichette, elenchi o marcatori speciali.
 
 RESPONSE:
-  `;
+`;
 }
 
 function promptThread(contesto, conversazione, richiesta) {
   return `
-SYSTEM:
-- Sei un assistente AI versatile progettato per gestire conversazioni dinamiche e adattarti a varie richieste. 
-- Rispondi sempre in italiano.
+SYSTEM: Sei un assistente AI versatile progettato per gestire conversazioni dinamiche e adattarti a varie richieste. Rispondi sempre in italiano.
 
-TASK:
-Elaborare la risposta alla richista sulla base del contesto fornito e della conversazione.
+TASK: Elabora la risposta alla richiesta sulla base del contesto fornito e della conversazione.
 
 INSTRUCTIONS:
 1. Analizza attentamente il contesto, la conversazione precedente e la richiesta attuale.
@@ -130,14 +129,12 @@ INSTRUCTIONS:
 8. Se l'intento non è chiaro, chiedi gentilmente chiarimenti invece di fare supposizioni.
 9. Sii flessibile: se la richiesta implica un'azione specifica, adattati di conseguenza.
 10. Se è necessario integrare con conoscenze generali, specifica chiaramente quando lo stai facendo.
-11. Assicurati che la risposta sia interamente in italiano.
 
 CONTESTO:
-<<<INIZIO_CONTESTO>>>
+<<<BEGIN_CONTESTO>>>
 ${contesto}
-<<<FINE_CONTESTO>>>
+<<<END_CONTESTO>>>
 
-CONVERSAZIONE:
 <<<INIZIO_CONVERSAZIONE>>>
 ${conversazione}
 <<<FINE_CONVERSAZIONE>>>
@@ -146,14 +143,13 @@ RICHIESTA:
 ${richiesta}
 
 OUTPUT_FORMAT:
-Rispondi con un testo continuo suddiviso in paragrafi. Inizia direttamente con il contenuto. Evita di usare etichette, elenchi o marcatori speciali.
+Rispondi con un testo piano suddiviso in paragrafi.Evita di usare etichette, elenchi o marcatori speciali.
 
 RESPONSE:
-  `;
+`;
 }
 
 /*
-
 1. max_new_tokens: 512
    Questo è un valore ragionevole per risposte di lunghezza media. 
    Potrebbe essere aumentato a 1024 o più se si desiderano risposte più lunghe e dettagliate.
