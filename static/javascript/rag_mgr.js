@@ -155,15 +155,15 @@ const Rag = {
             } else {
               console.error(err);
               UaLog.log(`${err}`);
-              throw err;
+              decr += PROMPT_DECR;
+              continue;
+              // throw err AAA;
             }
           } //end catch
           npart++;
           doc = rgt;
-
           answer = cleanResponse(answer);
           docAnswersLst.push(answer);
-
           const s = `DOCUMENTO : ${docName}_${npart}\n${answer}`;
           this.answers.push(s);
         } // end while
@@ -172,6 +172,7 @@ const Rag = {
         const docAnswersLen = docAnswersLst.length;
         let docAnswresTxt = docAnswersLst.join("\n\n"); //TODO
         let docContext = "";
+
         while (true) {
           prompt = promptBuildContext(docAnswresTxt, this.ragQuery);
           const payload = getPayloadBuildContext(prompt);
@@ -181,14 +182,16 @@ const Rag = {
           } catch (err) {
             const ei = errorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              UaLog.log(`Error tokens build Context  ${lft.length}`);
               console.error(`Error tokens buildContext. ${prompt.length}`);
+              UaLog.log(`Error tokens build Context  ${lft.length}`);
               docContext = truncInput(docContext, PROMPT_DECR);
               continue;
             } else {
               console.error(err);
               UaLog.log(`${err}`);
-              throw err;
+              docContext = truncInput(docContext, PROMPT_DECR);
+              continue;
+              // AAA throw err;
             }
           }
           break;
@@ -226,7 +229,9 @@ const Rag = {
             } else {
               console.error(err);
               UaLog.log(`${err}`);
-              throw err;
+              context = truncInput(context, PROMPT_DECR);
+              continue;
+              // AAA throw err;
             }
           }
           break;
@@ -246,7 +251,7 @@ const Rag = {
       }
     } // end query
   },
-  //////////////////////////
+
   // thread
   async requestContext(query) {
     let text = "";
@@ -276,7 +281,9 @@ const Rag = {
             } else {
               console.error(err);
               UaLog.log(`${err}`);
-              throw err;
+              thread = truncInput(thread, PROMPT_DECR);
+              continue;
+              //AAA throw err;
             }
           } //end catch
           break;
@@ -313,7 +320,9 @@ const Rag = {
             } else {
               console.error(err);
               UaLog.log(`${err}`);
-              throw err;
+              thread = truncInput(thread, PROMPT_DECR);
+              continue;
+              //AAA throw err;
             }
           }
           break;
