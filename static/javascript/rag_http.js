@@ -62,12 +62,14 @@ const HfRequest = {
       if (this.isCancelled) return null;
       const data = await response.json();
       if (!response.ok) {
+        console.error("1)", response.statusText);
         const errorType = this.checkError(response.status, data);
         const errorInfo = this.createErrorInfo(response.status, response.statusText, data.error, errorType);
         throw new Error(errorInfo);
       }
       const errorType = this.isInvalidResponse(data);
       if (typeof errorType === "string") {
+        console.error("2)", response.statusText);
         const errorInfo = this.createErrorInfo(response.status, response.statusText, data.error, errorType);
         throw new Error(errorInfo);
       }
@@ -75,6 +77,7 @@ const HfRequest = {
     } catch (error) {
       if (this.isCancelled) return null;
       if (error.name === "AbortError") {
+        console.error("3)", response.statusText);
         const errorInfo = this.createErrorInfo(0, "Timeout", "La richiesta è scaduta", TIMEOUT_ERROR);
         throw new Error(errorInfo);
       }
@@ -126,13 +129,14 @@ const HfRequest = {
   },
 };
 
-function errorInfo(err) {
+function errorInfo(error) {
   let js = {};
   try {
-    js = JSON.parse(err.message);
+    js = JSON.parse(error.message);
     return js;
   } catch (err) {
     console.error(err);
+    console.error(error);
     js = {};
     throw err;
   } finally {

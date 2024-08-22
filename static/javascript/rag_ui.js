@@ -253,8 +253,9 @@ const TextInput = {
     setOutText("");
     const msg = this.inp.value.trim();
     try {
-      const txt = await Rag.requestDocsRAG(msg);
-      setOutText(txt);
+      let text = await Rag.requestDocsRAG(msg);
+      text = cleanOut(text);
+      setOutText(text);
       this.inp.value = "";
       UaLog.close();
     } catch (err) {
@@ -277,11 +278,12 @@ const TextInput = {
     if (ThreadMgr.isFirst()) setOutText("");
     const query = this.inp.value.trim();
     try {
-      const text = await Rag.requestContext(query);
+      let text = await Rag.requestContext(query);
       if (text == "") {
         hideSpinner();
         return;
       }
+      text = cleanOut(text);
       setOutText(text);
       this.inp.value = "";
     } catch (err) {
@@ -304,7 +306,7 @@ const TextInput = {
     ThreadMgr.init();
   },
 };
-
+  
 const setOutText = (txt) => {
   let out = document.getElementById("id-text-out");
   const h = `<pre class="pre-text"></pre>`;

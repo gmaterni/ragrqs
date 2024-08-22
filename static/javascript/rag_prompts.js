@@ -43,7 +43,7 @@ RESPONSE:
 
 function promptBuildContext(informazioni, domanda) {
   return `
-SYSTEM: Sei un assitente AI specializzato nella riorganizzazione di informazioni come contesto nelle interrogazioni ad un LLM.
+SYSTEM: Sei un assitente AI specializzato nella riorganizzazione di informazioni come contesto nelle interrogazioni ad un LLM. Rispondi ESCLUSIVAMENTE in italiano. Non usare altre lingue in nessuna parte della risposta.
 
 TASK: Analizza e riorganizza le informazioi rilevanti per rispondere alla domada  fornite seguendo le istruzioni.
 
@@ -85,12 +85,12 @@ RESPONSE:
 
 function promptWithContext(contesto, domanda) {
   return `
-SYSTEM: Sei un sistema AI specializzato nell'analisi semantica di informazioni estratte da documenti.  Rispondi sempre ed esclusivamente in italiano.
+SYSTEM: Sei un sistema AI specializzato nell'analisi semantica di informazioni estratte da documenti. Rispondi sempre ed esclusivamente in italiano.
 
 TASK: Elabora la risposta alla domanda sulla base del contesto fornito.
 
 INSTRUCTIONS:
-1. Analizza attentamente il contestoo e identifica le informazioni pertinenti alla domanda.
+1. Analizza attentamente il contesto e identifica le informazioni pertinenti alla domanda.
 2. Estrai i concetti chiave e fai inferenze ragionevoli.
 3. Prepara una risposta chiara e dettagliata utilizzandoo al meglio il contesto.
 4. Inizia con una breve introduzione, sviluppa l'analisi, elabora le inferenze e concludi con una sintesi.
@@ -207,11 +207,11 @@ function getPayloadDoc(prompt) {
     inputs: prompt,
     parameters: {
       task: "text2text-generation",
-      max_new_tokens: 1024,
+      max_new_tokens: 2048,
       num_return_sequences: 1,
-      temperature: 0.5,
-      top_k: 50,
-      top_p: 0.7,
+      temperature: 0.2,
+      top_p: 0.84,
+      top_k: 30,
       do_sample: false,
       no_repeat_ngram_size: 4,
       num_beams: 4,
@@ -234,18 +234,18 @@ function getPayloadBuildContext(prompt) {
     inputs: prompt,
     parameters: {
       task: "text2text-generation",
-      max_new_tokens: 4096,
+      max_new_tokens: 6000,
       num_return_sequences: 1,
-      temperature: 0.4,
-      top_k: 20,
-      top_p: 0.8,
+      temperature: 0.2,
+      top_p: 0.85,
+      top_k: 30,
       do_sample: false,
       no_repeat_ngram_size: 4,
-      num_beams: 6,
-      repetition_penalty: 1.4,
+      num_beams: 4,
+      repetition_penalty: 1.2,
       return_full_text: false,
       details: false,
-      max_time: 120.0,
+      max_time: 180.0,
       seed: 42,
     },
     options: {
@@ -263,9 +263,9 @@ function getPayloadWithContext(prompt) {
       task: "text2text-generation",
       max_new_tokens: 2048,
       num_return_sequences: 1,
-      temperature: 0.6,
+      temperature: 0.3,
+      top_p: 0.85,
       top_k: 50,
-      top_p: 0.7,
       do_sample: false,
       no_repeat_ngram_size: 4,
       num_beams: 5,
@@ -290,9 +290,9 @@ function getPayloadThread(prompt) {
       task: "text2text-generation",
       max_new_tokens: 2048,
       num_return_sequences: 1,
-      temperature: 0.6,
-      top_k: 50,
-      top_p: 0.7,
+      temperature: 0.3,
+      top_p: 0.85,
+      top_k: 30,
       do_sample: false,
       no_repeat_ngram_size: 4,
       num_beams: 5,

@@ -117,10 +117,10 @@ function elencoRisposte(e) {
   if (rs.length == 0) return;
   const text = rs
     .map((x, i) => {
-      x = subResponseDOcTag(x);
+      // x = subResponseDOcTag(x);
       return `\n[${i + 1}]\n ${x.trim()}`;
     })
-    .join("\n");
+    .join("\n");  
   wnds.wpre.show(text);
 }
 

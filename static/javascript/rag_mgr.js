@@ -154,20 +154,23 @@ const Rag = {
               continue;
             } else {
               console.error(err);
+              UaLog.log(`${err}`);
               throw err;
             }
           } //end catch
           npart++;
           doc = rgt;
+
           answer = cleanResponse(answer);
           docAnswersLst.push(answer);
+
           const s = `DOCUMENTO : ${docName}_${npart}\n${answer}`;
           this.answers.push(s);
         } // end while
 
         //implemntare build context
         const docAnswersLen = docAnswersLst.length;
-        let docAnswresTxt = docAnswersLst.join("\n\n"); //AAA
+        let docAnswresTxt = docAnswersLst.join("\n\n"); //TODO
         let docContext = "";
         while (true) {
           prompt = promptBuildContext(docAnswresTxt, this.ragQuery);
@@ -184,13 +187,14 @@ const Rag = {
               continue;
             } else {
               console.error(err);
+              UaLog.log(`${err}`);
               throw err;
             }
           }
           break;
         } //end while
         UaLog.log(`context  ${docAnswersLen} => ${docContext.length}`);
-        docContext = cleanResponse(docContext);
+        // AAA docContext = cleanResponse(docContext);
         docContext = `\n### DOCUMENTO: ${docName}\n ${docContext}`;
         this.docContextLst.push(docContext);
       } // end for document
@@ -221,6 +225,7 @@ const Rag = {
               continue;
             } else {
               console.error(err);
+              UaLog.log(`${err}`);
               throw err;
             }
           }
@@ -270,6 +275,7 @@ const Rag = {
               continue;
             } else {
               console.error(err);
+              UaLog.log(`${err}`);
               throw err;
             }
           } //end catch
@@ -306,6 +312,7 @@ const Rag = {
               continue;
             } else {
               console.error(err);
+              UaLog.log(`${err}`);
               throw err;
             }
           }
@@ -326,8 +333,8 @@ const Rag = {
   },
 };
 
-const LLM = "Assistant:";
-const USER = "User:";
+const LLM = "## Assistant:";
+const USER = "## User:";
 
 const ThreadMgr = {
   rows: [],
@@ -349,9 +356,9 @@ const ThreadMgr = {
     for (const ua of this.rows) {
       const u = ua[0];
       const a = ua[1];
-      rows.push(`\n${USER}\n${u}\n${LLM}\n${a}\n`);
+      rows.push(`${USER}\n${u}\n${LLM}\n${a}\n`);
     }
-    return rows.join("").trim();
+    return rows.join("\n\n");
   },
   isFirst() {
     return this.rows.length < 2;
