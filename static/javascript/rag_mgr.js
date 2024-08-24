@@ -115,6 +115,7 @@ const Rag = {
     DataMgr.readDbDocNames();
     DataMgr.readDbDocs();
     this.ragQuery = query;
+    this.saveToDb();
     let ndoc = 0;
     try {
       for (let i = 0; i < DataMgr.docs.length; i++) {
@@ -146,18 +147,17 @@ const Rag = {
             answer = await HfRequest.post(payload, TIMEOUT);
             if (!answer) return "";
           } catch (err) {
-            const ei = errorInfo(err);
+            console.error(`RR1)\n`, err);
+            const ei = getErrorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              UaLog.log(`Error tokens Doc  ${lft.length}`);
-              console.error(`Error tokens. Doc ${prompt.length}`);
+              UaLog.log(`Error tokens Doc  ${prompt.length}`);
               decr += PROMPT_DECR;
+              continue;
+            } else if (ei.errorType === TIMEOUT_ERROR) {
+              UaLog.log(`Error timeout Doc`);
               continue;
             } else {
-              console.error(err);
-              UaLog.log(`${err}`);
-              decr += PROMPT_DECR;
-              continue;
-              // throw err AAA;
+              throw err;
             }
           } //end catch
           npart++;
@@ -180,24 +180,23 @@ const Rag = {
             docContext = await HfRequest.post(payload, TIMEOUT);
             if (!docContext) return "";
           } catch (err) {
-            const ei = errorInfo(err);
+            console.error(`RR2)`, err);
+            const ei = getErrorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              console.error(`Error tokens buildContext. ${prompt.length}`);
-              UaLog.log(`Error tokens build Context  ${lft.length}`);
-              docContext = truncInput(docContext, PROMPT_DECR);
+              UaLog.log(`Error tokens build Context  ${prompt.length}`);
+              docAnswresTxt = truncInput(docAnswresTxt, PROMPT_DECR);
+              continue;
+            } else if (ei.errorType === TIMEOUT_ERROR) {
+              UaLog.log(`Error timeout build Context`);
               continue;
             } else {
-              console.error(err);
-              UaLog.log(`${err}`);
-              docContext = truncInput(docContext, PROMPT_DECR);
-              continue;
-              // AAA throw err;
+              throw err;
             }
           }
           break;
         } //end while
         UaLog.log(`context  ${docAnswersLen} => ${docContext.length}`);
-        // AAA docContext = cleanResponse(docContext);
+        // docContext = cleanResponse(docContext); //AAA
         docContext = `\n### DOCUMENTO: ${docName}\n ${docContext}`;
         this.docContextLst.push(docContext);
       } // end for document
@@ -220,20 +219,20 @@ const Rag = {
             answer = await HfRequest.post(payload, TIMEOUT);
             if (!answer) return "";
           } catch (err) {
-            const ei = errorInfo(err);
+            console.error(`RR3)`, err);
+            const ei = getErrorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              UaLog.log(`Error tokens with COntext ${lft.length}`);
-              console.error(`Error tokens context. Doc ${prompt.length}`);
+              UaLog.log(`Error tokens with COntext ${prompt.length}`);
               context = truncInput(context, PROMPT_DECR);
+              continue;
+            } else if (ei.errorType === TIMEOUT_ERROR) {
+              UaLog.log(`Error timeout eith Context`);
               continue;
             } else {
-              console.error(err);
-              UaLog.log(`${err}`);
-              context = truncInput(context, PROMPT_DECR);
-              continue;
-              // AAA throw err;
+              throw err;
             }
           }
+
           break;
         }
         answer = cleanResponse(answer);
@@ -272,18 +271,17 @@ const Rag = {
             text = await HfRequest.post(payload, TIMEOUT);
             if (!text) return "";
           } catch (err) {
-            const ei = errorInfo(err);
+            console.error(`RR4)`, err);
+            const ei = getErrorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              UaLog.log(`Error tokens Thread Init  ${prompt.length}`);
-              console.error(`Error tokens Thread Init.  ${prompt.length}`);
+              UaLog.log(`Error tokens Thread Init ${prompt.length}`);
               thread = truncInput(thread, PROMPT_DECR);
+              continue;
+            } else if (ei.errorType === TIMEOUT_ERROR) {
+              UaLog.log(`Error timeout Thread Init`);
               continue;
             } else {
-              console.error(err);
-              UaLog.log(`${err}`);
-              thread = truncInput(thread, PROMPT_DECR);
-              continue;
-              //AAA throw err;
+              throw err;
             }
           } //end catch
           break;
@@ -311,18 +309,17 @@ const Rag = {
             text = await HfRequest.post(payload, TIMEOUT);
             if (!text) return "";
           } catch (err) {
-            const ei = errorInfo(err);
+            console.error(`RR5)`, err);
+            const ei = getErrorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
               UaLog.log(`Error tokens Thread  ${prompt.length}`);
-              console.error(`Error tokens Thread.  ${prompt.length}`);
               thread = truncInput(thread, PROMPT_DECR);
+              continue;
+            } else if (ei.errorType === TIMEOUT_ERROR) {
+              UaLog.log(`Error timeout Thread`);
               continue;
             } else {
-              console.error(err);
-              UaLog.log(`${err}`);
-              thread = truncInput(thread, PROMPT_DECR);
-              continue;
-              //AAA throw err;
+              throw err;
             }
           }
           break;
