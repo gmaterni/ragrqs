@@ -75,15 +75,14 @@ const getPartDoc = (pRgt, partSize) => {
   return [pLft, pRgt];
 };
 
-const ragLog = (msg, lftLen, rgtLen, answers) => {
+const ragLog = (msg, lftL, rgtL, answers) => {
   const maxl = MAX_PROMPT_LENGTH;
-  const rspsl = answers.reduce((acc, cur) => {
+  const rspsL = answers.reduce((acc, cur) => {
     return acc + cur.length;
   }, 0);
-  let s = `${msg} mx:${maxl} lft:${lftLen} rgt:${rgtLen} arr:${rspsl}`;
+  let s = `${msg} mx:${maxl} lft:${lftL} rgt:${rgtL} arr:${rspsL}`;
   xlog(s);
-  // s = `${msg}   ${lftLen}   ${rgtLen}   ${rspsl}`;
-  const row=formatRow([msg,ftlen,rdtlen,rspsl],[10,-7,-7,-7])
+  const row = formatRow([msg, lftL, rgtL, rspsL], [8, -7, -7, -7]);
   UaLog.log(row);
 };
 
@@ -137,7 +136,7 @@ const Rag = {
     this.saveToDb();
     let ndoc = 0;
     try {
-      let j=1;
+      let j = 1;
       for (let i = 0; i < DataMgr.docs.length; i++) {
         let doc = DataMgr.docs[i];
         if (doc.trim() == "") continue;
