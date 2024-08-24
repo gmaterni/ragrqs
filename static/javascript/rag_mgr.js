@@ -24,11 +24,29 @@ const PROMPT_DECR = 1024 * 2;
 
 const TIMEOUT = 60000;
 
+function wait(seconds) {
+  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+}
+
+async function example() {
+  console.log("Inizio attesa...");
+  await wait(5); // Attende 5 secondi
+  console.log("Fine attesa!");
+}
+
+example();
+
 const truncInput = (txt, decr) => {
   const tl = txt.length;
   const lim = tl - decr;
   const s = txt.substring(0, lim);
   return s;
+};
+
+//setta il prompt al limite massimo
+const setMaxLen = (s) => {
+  const lim = MAX_PROMPT_LENGTH - 1000;
+  return s.substring(0, lim);
 };
 
 const getPartSize = (doc, prompt, decr) => {
@@ -118,6 +136,7 @@ const Rag = {
     this.saveToDb();
     let ndoc = 0;
     try {
+      let j=1;
       for (let i = 0; i < DataMgr.docs.length; i++) {
         let doc = DataMgr.docs[i];
         if (doc.trim() == "") continue;
@@ -126,7 +145,7 @@ const Rag = {
         xlog(`${docName} (${doc_entire_len}) `);
         UaLog.log(`${docName} (${doc_entire_len}) `);
         ++ndoc;
-        let npart = 0;
+        let npart = 1;
         let decr = 0;
         let prompt = "";
         let lft = "";
@@ -140,7 +159,7 @@ const Rag = {
             break;
           }
           [lft, rgt] = getPartDoc(doc, partSize);
-          ragLog(`${ndoc},${npart + 1}`, lft.length, rgt.length, this.answers);
+          ragLog(`${j}) ${ndoc},${npart}`, lft.length, rgt.length, this.answers);
           prompt = promptDoc(lft, query, docName);
           const payload = getPayloadDoc(prompt);
           try {
@@ -155,19 +174,21 @@ const Rag = {
               continue;
             } else if (ei.errorType === TIMEOUT_ERROR) {
               UaLog.log(`Error timeout Doc`);
+              wait(5);
+              // UaLog.log(`Error timeout Doc 2`);
               continue;
             } else {
               throw err;
             }
           } //end catch
           npart++;
+          j++;
           doc = rgt;
           answer = cleanResponse(answer);
           docAnswersLst.push(answer);
           const s = `DOCUMENTO : ${docName}_${npart}\n${answer}`;
           this.answers.push(s);
         } // end while
-
         //implemntare build context
         const docAnswersLen = docAnswersLst.length;
         let docAnswresTxt = docAnswersLst.join("\n\n"); //TODO
@@ -183,11 +204,14 @@ const Rag = {
             console.error(`RR2)`, err);
             const ei = getErrorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              UaLog.log(`Error tokens build Context  ${prompt.length}`);
+              UaLog.log(`Error tokens build Context ${prompt.length}`);
               docAnswresTxt = truncInput(docAnswresTxt, PROMPT_DECR);
+              docAnswresTxt = setMaxLen(docAnswresTxt);
               continue;
             } else if (ei.errorType === TIMEOUT_ERROR) {
               UaLog.log(`Error timeout build Context`);
+              wait(5);
+              // UaLog.log(`Error timeout build Context 2`);
               continue;
             } else {
               throw err;
@@ -222,17 +246,19 @@ const Rag = {
             console.error(`RR3)`, err);
             const ei = getErrorInfo(err);
             if (ei.errorType === ERROR_TOKENS) {
-              UaLog.log(`Error tokens with COntext ${prompt.length}`);
+              UaLog.log(`Error tokens with Context ${prompt.length}`);
               context = truncInput(context, PROMPT_DECR);
+              context = setMaxLen(context);
               continue;
             } else if (ei.errorType === TIMEOUT_ERROR) {
-              UaLog.log(`Error timeout eith Context`);
+              UaLog.log(`Error timeout with  Context`);
+              wait(5);
+              // UaLog.log(`Error timeout with  Context 2`);
               continue;
             } else {
               throw err;
             }
           }
-
           break;
         }
         answer = cleanResponse(answer);
@@ -276,6 +302,7 @@ const Rag = {
             if (ei.errorType === ERROR_TOKENS) {
               UaLog.log(`Error tokens Thread Init ${prompt.length}`);
               thread = truncInput(thread, PROMPT_DECR);
+              context = setMaxLen(context);
               continue;
             } else if (ei.errorType === TIMEOUT_ERROR) {
               UaLog.log(`Error timeout Thread Init`);

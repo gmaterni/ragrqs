@@ -149,7 +149,7 @@ const Menu = {
     UaLog.callShow = show;
 
     UaLog.setXY(54, 13).setZ(111).new();
-    UaLog.log_show("Buon Lavoro");
+    // UaLog.log_show("Buon Lavoro");
   },
   close() {
     const btn = document.querySelector("#menu-toggle");
