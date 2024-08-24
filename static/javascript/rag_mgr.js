@@ -82,8 +82,9 @@ const ragLog = (msg, lftLen, rgtLen, answers) => {
   }, 0);
   let s = `${msg} mx:${maxl} lft:${lftLen} rgt:${rgtLen} arr:${rspsl}`;
   xlog(s);
-  s = `${msg}   ${lftLen}   ${rgtLen}   ${rspsl}`;
-  UaLog.log(s);
+  // s = `${msg}   ${lftLen}   ${rgtLen}   ${rspsl}`;
+  const row=formatRow([msg,ftlen,rdtlen,rspsl],[10,-7,-7,-7])
+  UaLog.log(row);
 };
 
 const Rag = {

@@ -15,6 +15,16 @@
 // utilizzare l'ultima versione di UaWindowAdm
 // setXY con vw ,vh
 
+function formatRow(vs, sps) {
+  return vs
+    .map((v, i) => {
+      const space = sps[i];
+      const frtm = space < 0 ? v.toString().padStart(Math.abs(space), " ") : v.toString().padEnd(space, " ");
+      return frtm;
+    })
+    .join(" ");
+}
+
 var UaLog = {
   callHide: function () {},
   callShow: function () {},
@@ -52,9 +62,9 @@ var UaLog = {
     return this;
   },
   prn_(...args) {
-    let s = args.join("\n");  
+    let s = args.join("\n");
     let e = document.getElementById(this.msg_id);
-    let h = e.textContent + s + "\n"; 
+    let h = e.textContent + s + "\n";
     e.textContent = h;
   },
   print(...args) {
