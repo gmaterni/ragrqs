@@ -231,13 +231,14 @@ const TextInput = {
   },
   handleEnter(e) {
     if (e.key === "Enter" && !e.shiftKey) {
+      if (!Rag.returnOk()) return;
       e.preventDefault();
       this.send2();
     }
   },
 
   // legge i documenti dal DBlocale
-  // sala le risposte RAG
+  // salva le risposte RAG
   // crea il contesto
   async send() {
     const q = this.inp.value;
@@ -295,10 +296,6 @@ const TextInput = {
     hideSpinner();
   },
   clear() {
-    // let s = "messaggio di prova per vedere la massima larghezza";
-    // for (let i = 0; i < 40; i++) {
-    //   UaLog.log(s);
-    // }
     const ok = confirm("Confermi cancellazione conversazione? ");
     if (!ok) return;
     this.inp.value = "";
@@ -306,7 +303,7 @@ const TextInput = {
     ThreadMgr.init();
   },
 };
-  
+
 const setOutText = (txt) => {
   let out = document.getElementById("id-text-out");
   const h = `<pre class="pre-text"></pre>`;

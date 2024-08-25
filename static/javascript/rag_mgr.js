@@ -102,6 +102,10 @@ const Rag = {
     this.readRespsFromDb();
     this.readFromDb();
   },
+  returnOk() {
+    const ok = this.ragContext.length > 10;
+    return ok;
+  },
   saveToDb() {
     const js = {
       context: this.ragContext,

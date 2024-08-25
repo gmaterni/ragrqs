@@ -19,7 +19,7 @@
  */
 
 "use strict";
-const VERS = "0.1.47 (24-08-2024)";
+const VERS = "0.1.48 (26-08-2024)";
 
 var xlog = console.log;
 var xerror = console.error;
@@ -142,14 +142,6 @@ function elencoDati(e) {
   let msg = arr.join("\n ");
   wnds.wpre.show(msg);
 }
-
-//elenco documenti in memoria
-// function elencoDocs(e) {
-//   DataMgr.readDbDocNames();
-//   const arr = DataMgr.doc_names;
-//   const s = arr.join("\n");
-//   wnds.wpre.show(s);
-// }
 
 //visualizza docuemnto
 const showT = (n) => {
