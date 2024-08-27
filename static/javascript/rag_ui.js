@@ -285,7 +285,7 @@ const TextInput = {
         return;
       }
       text = cleanOut(text);
-      setOutText(text);
+      setOutText2(text);
       this.inp.value = "";
     } catch (err) {
       const msg = `send2\n${err}`;
@@ -310,6 +310,26 @@ const setOutText = (txt) => {
   out.innerHTML = h;
   const pre = out.querySelector(".pre-text");
   pre.textContent = txt;
+  pre.scrollTop = pre.scrollHeight;
+};
+
+const setOutText2 = async (txt) => {
+  let out = document.getElementById("id-text-out");
+  let pre = out.querySelector(".pre-text");
+  if (!pre) {
+    const h = `<pre class="pre-text"></pre>`;
+    out.innerHTML = h;
+    pre = out.querySelector(".pre-text");
+    pre.textContent = txt;
+    return;
+  }
+  for (let i = 0; i < txt.length; i++) {
+    pre.textContent += txt[i];
+    pre.scrollTop = pre.scrollHeight;
+    await new Promise((resolve) => setTimeout(resolve, 2));
+  }
+
+  pre.textContent += txt;
   pre.scrollTop = pre.scrollHeight;
 };
 
