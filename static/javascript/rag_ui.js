@@ -174,6 +174,27 @@ const Menu = {
   },
 };
 
+const setOutText = (txt) => {
+  const p = document.querySelector("#id-text-out .pre-text");
+  p.textContent = txt;
+  p.scrollTop = p.scrollHeight;
+};
+
+// const setOutText2 = async (txt) => {
+  // const t = p.textContent;
+  // if (t.trim().length < 2) {
+  //   p.textContent = txt;
+  //   p.scrollTop = p.scrollHeight;
+  //   return;
+  // }
+  // for (let i = 0; i < txt.length; i++) {
+  //   p.textContent += txt[i];
+  //   p.scrollTop = p.scrollHeight;
+  //   await new Promise((resolve) => setTimeout(resolve, 2));
+  // }
+// };
+
+
 const TextInput = {
   wnd: null,
   init() {
@@ -276,7 +297,9 @@ const TextInput = {
       return;
     }
     showSpinner();
-    if (ThreadMgr.isFirst()) setOutText("");
+    if (ThreadMgr.isFirst()) {
+      setOutText("");
+    }
     const query = this.inp.value.trim();
     try {
       let text = await Rag.requestContext(query);
@@ -285,7 +308,7 @@ const TextInput = {
         return;
       }
       text = cleanOut(text);
-      setOutText2(text);
+      setOutText(text);
       this.inp.value = "";
     } catch (err) {
       const msg = `send2\n${err}`;
@@ -304,34 +327,6 @@ const TextInput = {
   },
 };
 
-const setOutText = (txt) => {
-  let out = document.getElementById("id-text-out");
-  const h = `<pre class="pre-text"></pre>`;
-  out.innerHTML = h;
-  const pre = out.querySelector(".pre-text");
-  pre.textContent = txt;
-  pre.scrollTop = pre.scrollHeight;
-};
-
-const setOutText2 = async (txt) => {
-  let out = document.getElementById("id-text-out");
-  let pre = out.querySelector(".pre-text");
-  if (!pre) {
-    const h = `<pre class="pre-text"></pre>`;
-    out.innerHTML = h;
-    pre = out.querySelector(".pre-text");
-    pre.textContent = txt;
-    return;
-  }
-  for (let i = 0; i < txt.length; i++) {
-    pre.textContent += txt[i];
-    pre.scrollTop = pre.scrollHeight;
-    await new Promise((resolve) => setTimeout(resolve, 2));
-  }
-
-  pre.textContent += txt;
-  pre.scrollTop = pre.scrollHeight;
-};
 
 TextOutput = {
   init() {
@@ -343,15 +338,14 @@ TextOutput = {
     wndBtn.addEventListener("click", () => this.openWnd());
   },
   openWnd() {
-    const p = document.getElementById("id-text-out");
+    const p = document.querySelector("#id-text-out .pre-text");
     const s = p.textContent;
     wnds.wout.show(s);
   },
   async copy() {
-    const e = document.getElementById("id-text-out");
-    const pre = e.querySelector("pre");
-    if (!pre) return;
+    const pre = document.querySelector("#id-text-out .pre-text");
     const t = pre.textContent;
+    if (t.trim().length < 2) return;
     pre.classList.add("copied");
     this.copyBtn.classList.add("copied");
     try {
@@ -365,7 +359,7 @@ TextOutput = {
     }, 5000);
   },
   clear() {
-    const out = document.getElementById("id-text-out");
+    const out = document.querySelector("#id-text-out .pre-text");
     out.textContent = "";
   },
 };

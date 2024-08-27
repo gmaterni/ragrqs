@@ -121,6 +121,7 @@ const HfRequest = {
       throw error;
     }
   },
+
   cancelRequest() {
     if (this.controller) {
       this.isCancelled = true;
@@ -164,3 +165,4 @@ function errorToText(err) {
     return s;
   }
 }
+

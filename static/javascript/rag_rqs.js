@@ -19,7 +19,7 @@
  */
 
 "use strict";
-const VERS = "0.1.48 (26-08-2024)";
+const VERS = "0.1.49 (27-08-2024)";
 
 var xlog = console.log;
 var xerror = console.error;
@@ -69,14 +69,28 @@ const hideSpinner = () => {
 var tm;
 
 function openApp() {
-  tm = umgm();
-  wnds.init();
-  Menu.init();
-  TextInput.init();
-  TextOutput.init();
-  Rag.init();
-  document.querySelector(".menu-btn").checked = false;
-  release();
+  setTimeout(() => {
+    tm = umgm();
+    wnds.init();
+    Menu.init();
+    TextInput.init();
+    TextOutput.init();
+    Rag.init();
+    document.querySelector(".menu-btn").checked = false;
+    release();
+    showHistory();
+  }, 10);
+}
+
+// Visualizza la storia della conversazione
+function showHistory() {
+  const txt = ThreadMgr.getThread();
+  setOutText(txt);
+  // const p = document.querySelector("#id-text-out .pre-text");
+  // p.textContent = txt;
+  // setTimeout(() => {
+  //   p.scrollTop = p.scrollHeight;
+  // }, 0);
 }
 
 function release() {
@@ -120,7 +134,7 @@ function elencoRisposte(e) {
       // x = subResponseDOcTag(x);
       return `\n[${i + 1}]\n ${x.trim()}`;
     })
-    .join("\n");  
+    .join("\n");
   wnds.wpre.show(text);
 }
 
@@ -155,7 +169,7 @@ function elencoDocs() {
   DataMgr.readDbDocs();
   DataMgr.readDbDocNames();
   const arr = DataMgr.doc_names;
-  const fh = (x,i) => `
+  const fh = (x, i) => `
       <li><a href="#" onCLick="showT(${i});">${i + 1}.${x}</a></li>
   `;
   const jfh = UaJtfh();
@@ -193,7 +207,6 @@ function calcQuery() {
   const s = calc();
   wnds.wpre.show(s);
 }
-
 
 //cancella dati
 function deleteDati(e) {
@@ -252,4 +265,3 @@ function showPrompts(e) {
     .join("\n");
   wnds.wpre.show(text);
 }
-
