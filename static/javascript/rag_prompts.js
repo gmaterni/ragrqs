@@ -12,13 +12,11 @@ INSTRUCTIONS:
 1. Identifica la tipologia e lo scopo del documento (es. articolo scientifico, racconto, saggio, documento tecnico) e adatta l'analisi di conseguenza.
 2. Analizza attentamente il documento fornito e identifica le informazioni pertinenti alla domanda.
 3. Estrai i concetti chiave e fai inferenze ragionevoli.
-3. Focalizzati sull'estrazione di concetti chiave e inferenze rilevanti per la domanda.
-4. Seleziona citazioni specifiche direttamente collegate alla domanda.
-5. Prepara una risposta chiara e dettagliata.
-6. Inizia con una breve introduzione, sviluppa l'analisi, esponi le inferenze e concludi con una sintesi.
-7. Cita le fonti quando è utile per chiarire informazioni o inferenze.
-8. Se trovi contenuti in altre lingue nel documento, traducili in italiano prima di includerli nella risposta.
-9. Mantieni un tono oggettivo e uno stile fluido e coerente.
+4. Focalizzati sull'estrazione di concetti chiave e inferenze rilevanti per la domanda.
+5. Seleziona citazioni specifiche direttamente collegate alla domanda.
+6. Prepara una risposta chiara e dettagliata.
+7. Inizia con una breve introduzione, sviluppa l'analisi, esponi le inferenze e concludi con una sintesi.
+8. Mantieni un tono oggettivo e uno stile fluido e coerente.
 
 DOCUMENTO:
 <<<INIZIO_DOCUMENTO>>>
@@ -31,11 +29,11 @@ ${domanda}
 OUTPUT_FORMAT:
 La risposta dovrà essere strutturata nel seguente modo:
 - Introduzione:
-- Concetti chiav:e
+- Concetti chiave:
 - Citazioni:
 - Inferenze:
 - Dettagli rilevanti:
-- Conclusione:
+- Sintesi:
 
 RESPONSE:
 `;
@@ -48,18 +46,17 @@ SYSTEM: Sei un assitente AI specializzato nella riorganizzazione di informazioni
 TASK: Analizza e riorganizza le informazioi rilevanti per rispondere alla domada  fornite seguendo le istruzioni.
 
 INSTRUCTIONS:
-1. Analizza attentamente le informazioi e identifica i temi  e i concetti pertinenti  alla domanda.
+1. Analizza attentamente le informazioi e identifica i temi e i concetti simili.
 2. Estrai i concetti chiave e fai inferenze ragionevoli.
 3. Organizza le informazioni in una struttura logica e coerente.
-4. Prepara una risposta che riorganizzi i contenuti, dando priorità alle informazioni più importanti o rilevanti.
-5. Includi una breve introduzione che presenti i temi principali.
-6. Sviluppa l'analisi raggruppando le informazioni per argomenti correlati.
-7. Presenta le inferenze e le connessioni tra i diversi concetti.
-8. Includi, se rilevanti, dettagli specifici come nomi propri, termini tecnici, date o luoghi che contribuiscono alla precisione del contesto.
-9. Concludi con una sintesi che riassuma i punti chiave e la struttura logica.
-10. Evidenzia le connessioni tra contenuti estratti da fonti diverse.
-11. Effettua un controllo finale per assicurarti che tutte le informazioni chiave siano state incluse.
-12. Mantieni un tono oggettivo e uno stile fluido e coerente.
+4. Includi una breve introduzione che presenti i temi principali.
+5. Sviluppa l'analisi raggruppando le informazioni per argomenti correlati.
+6. Presenta le inferenze e le connessioni tra i diversi concetti.
+7. Includi, se rilevanti, dettagli come nomi propri, termini tecnici, date o luoghi che contribuiscono alla precisione del contesto.
+8. Concludi con una sintesi che riassuma i punti chiave e la struttura logica.
+9. Evidenzia le connessioni tra contenuti estratti da fonti diverse.
+10. Effettua un controllo finale per assicurarti che tutte le informazioni chiave siano state incluse.
+11. Mantieni uno stile fluido e coerente.
 
 INFORAZIONI:
 <<<INIZIO_INFORMAZIONI>>>
@@ -72,12 +69,12 @@ ${domanda}
 OUTPUT_FORMAT:
 La risposta dovrà essere strutturata nel seguente modo:
 - Introduzione:
-- Concetti chiav:e
+- Concetti chiave:
 - Citazioni:
 - Inferenze:
 - Connessioni fra contenuti:
 - Dettagli rilevanti:
-- Conclusione:
+- Sintesi:
 
 RESPONSE:
 `;
