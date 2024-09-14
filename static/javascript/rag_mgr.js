@@ -178,8 +178,7 @@ const Rag = {
               continue;
             } else if (ei.errorType === TIMEOUT_ERROR) {
               UaLog.log(`Error timeout Doc`);
-              wait(5);
-              // UaLog.log(`Error timeout Doc 2`);
+              // wait(5);
               continue;
             } else {
               throw err;
@@ -214,8 +213,7 @@ const Rag = {
               continue;
             } else if (ei.errorType === TIMEOUT_ERROR) {
               UaLog.log(`Error timeout build Context`);
-              wait(5);
-              // UaLog.log(`Error timeout build Context 2`);
+              // wait(5);
               continue;
             } else {
               throw err;
@@ -256,8 +254,7 @@ const Rag = {
               continue;
             } else if (ei.errorType === TIMEOUT_ERROR) {
               UaLog.log(`Error timeout with  Context`);
-              wait(5);
-              // UaLog.log(`Error timeout with  Context 2`);
+              // wait(5);
               continue;
             } else {
               throw err;
