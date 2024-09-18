@@ -145,84 +145,90 @@
 // RESPONSE:
 // `;
 // }
+// - Informazione 1:
+//   Descrizione:
+//   Punti chiave:
+//   Elementi specifici:
+
+// - Informazione 2:
+//   Descrizione:
+//   Punti chiave:
+//   Elementi specifici:
+
+// (Ripeti il formato per ogni informazione identificata)
+
+
 /////////////////
 function promptDoc(testo, domanda, docName) {
   return `
-RUOLO: Sei un assistente AI specializzato nell'analisi documentale e nell'estrazione mirata di informazioni. Rispondi esclusivamente in italiano.
+SYSTEM: Sei un assistente AI specializzato nell'analisi documentale e nell'estrazione mirata di informazioni. Rispondi esclusivamente in italiano.
 
-COMPITO: Analizza l'estratto del documento "${docName}" e identifica le informazioni rilevanti per rispondere alla domanda: "${domanda}".
+TASK: Analizza l'estratto del documento "${docName}" e identifica le informazioni rilevanti per rispondere alla domanda: "${domanda}".
 
-ISTRUZIONI:
+INSTRUCTIONS:
 1. Esamina il testo e identifica le informazioni utili per costruire un contesto relativo alla domanda.
 2. Per ogni informazione rilevante, fornisci una breve descrizione.
 3. Elenca i punti chiave pertinenti per ogni informazione.
 4. Riporta elementi specifici (dati, citazioni, eventi) se utili per il contesto.
 5. Struttura la risposta secondo il formato di output specificato.
 
+DOMANDA: ${domanda}
+
 TESTO DA ANALIZZARE:
 <<<INIZIO_TESTO>>>
 ${testo}
 <<<FINE_TESTO>>>
 
-FORMATO DI OUTPUT:
-- Informazione 1:
-  Descrizione:
-  Punti chiave:
-  Elementi specifici:
+OUTPUT_FORMAT:
+L'ouput deve essere organizzato sula base delle istruioni. L'output deve essere privo di formattazione aggiuntiva o commenti, concentrandosi sul contenuto informativo in modo conciso e diretto. La struttura deve facilitare l'elaborazione automatica da parte di un LLM, privilegiando chiarezza e coerenza delle informazioni sulla leggibilità umana. 
 
-- Informazione  2:
-  Descrizione:
-  Punti chiave:
-  Elementi specifici:
-
-(Ripeti il formato per ogni informazione identificata)
-
-RISPOSTA:
+RESPONSE:
 `;
 }
 
 function promptBuildContext(informazioni, domanda = "") {
   return `
-RUOLO: Sei un assistente AI esperto nella sintesi e nell'organizzazione mirata di informazioni. Rispondi sempre ed esclusivamente in italiano.
+SYSTEM: Sei un assistente AI esperto nella sintesi e nell'organizzazione mirata di informazioni. Rispondi sempre ed esclusivamente in italiano.
 
-COMPITO: Organizza e sintetizza le informazioni estratte da frammenti di testo di un documento, creando un contesto utile per rispondere alla domanda: "${domanda}".
+TASK: Organizza e sintetizza le informazioni estratte da frammenti di testo di un documento, creando un contesto utile per rispondere alla domanda: "${domanda}".
 
-ISTRUZIONI:
+INSTRUCTIONS:
 1. Esamina tutte le informazioni fornite.
-2. Seleziona e raggruppa le informazioni pertinenti alla domanda.
+2. Seleziona e raggruppa le informazioni simili.
 3. Per ogni gruppo di informazioni rilevanti, genera una descrizione concisa.
 4. Elenca i punti chiave essenziali per comprendere il contesto.
 5. Riporta elementi specifici (dati, citazioni, eventi) se utili.
 6. Elimina le informazioni ridondanti, mantenendo solo la versione più completa.
 7. Elabora inferenze logiche basate sulle informazioni, se rilevanti per il contesto.
 8. Genera una sintesi finale del contesto.
-9. Struttura la risposta secondo il formato di output specificato.
 
 INFORMAZIONI:
 <<<INIZIO_INFORMAZIONI>>>
 ${informazioni}
 <<<FINE_INFORMAZIONI>>>
 
-FORMATO DI OUTPUT:
-- Informazioni 1:
-  Descrizione:
-  Punti chiave:
-  Elementi rilevanti:
+OUTPUT_FORMAT:
+L'ouput deve essere organizzato sula base delle istruioni. L'output deve essere privo di formattazione aggiuntiva o commenti, concentrandosi sul contenuto informativo in modo conciso e diretto. La struttura deve facilitare l'elaborazione automatica da parte di un LLM, privilegiando chiarezza e coerenza delle informazioni sulla leggibilità umana. 
 
-- Informazioni 2:
-  Descrizione:
-  Punti chiave:
-  Elementi rilevanti:
-
-(Ripeti il formato per ogni gruppo di informazioni 
-
-- Inferenze Logiche:
-
-- Sintesi Finale:
-
-RISPOSTA:
+RESPONSE:
 `;
 }
+// - Informazione 1:
+//   Descrizione:
+//   Punti chiave:
+//   Elementi rilevanti:
+
+// - Informazione 2:
+//   Descrizione:
+//   Punti chiave:
+//   Elementi rilevanti:
+
+// (Ripeti il formato per ogni gruppo di informazioni 
+
+// - Inferenze Logiche:
+
+// - Sintesi Finale:
+
 
 function promptWithContext(contesto, domanda) {
   return `

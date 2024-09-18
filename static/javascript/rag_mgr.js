@@ -166,6 +166,7 @@ const Rag = {
           ragLog(`${j}) ${ndoc},${npart}`, lft.length, rgt.length, this.answers);
           prompt = promptDoc(lft, query, docName);
           const payload = getPayloadDoc(prompt);
+          // const t0 = performance.now();
           try {
             answer = await HfRequest.post(payload, TIMEOUT);
             if (!answer) return "";
@@ -178,12 +179,16 @@ const Rag = {
               continue;
             } else if (ei.errorType === TIMEOUT_ERROR) {
               UaLog.log(`Error timeout Doc`);
-              // wait(5);
               continue;
             } else {
-              throw err;
+              UaLog.log(`Error ${err}`);
+              answer=`ERROR \n${err}\n`
+              // throw err;
             }
           } //end catch
+          // const t1 = performance.now();
+          // const dt = Math.round((t1 - t0) / 1000);
+          // UaLog.log(`t:  ${dt}`);
           npart++;
           j++;
           doc = rgt;
