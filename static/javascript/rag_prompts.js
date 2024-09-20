@@ -2,163 +2,6 @@
 
 "use strict";
 
-// function promptDoc(documento, domanda, docName) {
-//   return `
-// SYSTEM: Sei un assistente AI specializzato nell'analisi di documenti. Rispondi ESCLUSIVAMENTE in italiano. Non usare altre lingue in nessuna parte della risposta.
-
-// TASK: Analizza il documento ${docName} ed estrai le informazioni rilevanti per rispondere alla domanda fornita.
-
-// INSTRUCTIONS:
-// 1. Identifica la tipologia e lo scopo del documento (es. articolo scientifico, racconto, saggio, documento tecnico) e adatta l'analisi di conseguenza.
-// 2. Analizza attentamente il documento fornito e identifica le informazioni pertinenti alla domanda.
-// 3. Estrai i concetti chiave e fai inferenze ragionevoli.
-// 4. Focalizzati sull'estrazione di concetti chiave e inferenze rilevanti per la domanda.
-// 5. Seleziona citazioni specifiche direttamente collegate alla domanda.
-// 6. Prepara una risposta chiara e dettagliata.
-// 7. Inizia con una breve introduzione, sviluppa l'analisi, esponi le inferenze e concludi con una sintesi.
-// 8. Mantieni un tono oggettivo e uno stile fluido e coerente.
-
-// DOCUMENTO:
-// <<<INIZIO_DOCUMENTO>>>
-// ${documento}
-// <<<FINE_DOCUMENTO>>>
-
-// DOMANDA:
-// ${domanda}
-
-// OUTPUT_FORMAT:
-// La risposta dovrà essere strutturata nel seguente modo:
-// - Introduzione:
-// - Concetti chiave:
-// - Citazioni:
-// - Inferenze:
-// - Dettagli rilevanti:
-// - Sintesi:
-
-// RESPONSE:
-// `;
-// }
-
-// function promptBuildContext(informazioni, domanda) {
-//   return `
-// SYSTEM: Sei un assitente AI specializzato nella riorganizzazione di informazioni come contesto nelle interrogazioni ad un LLM. Rispondi ESCLUSIVAMENTE in italiano. Non usare altre lingue in nessuna parte della risposta.
-
-// TASK: Analizza e riorganizza le informazioi rilevanti per rispondere alla domada  fornite seguendo le istruzioni.
-
-// INSTRUCTIONS:
-// 1. Analizza attentamente le informazioi e identifica i temi e i concetti simili.
-// 2. Estrai i concetti chiave e fai inferenze ragionevoli.
-// 3. Organizza le informazioni in una struttura logica e coerente.
-// 4. Includi una breve introduzione che presenti i temi principali.
-// 5. Sviluppa l'analisi raggruppando le informazioni per argomenti correlati.
-// 6. Presenta le inferenze e le connessioni tra i diversi concetti.
-// 7. Includi, se rilevanti, dettagli come nomi propri, termini tecnici, date o luoghi che contribuiscono alla precisione del contesto.
-// 8. Concludi con una sintesi che riassuma i punti chiave e la struttura logica.
-// 9. Evidenzia le connessioni tra contenuti estratti da fonti diverse.
-// 10. Effettua un controllo finale per assicurarti che tutte le informazioni chiave siano state incluse.
-// 11. Mantieni uno stile fluido e coerente.
-
-// INFORAZIONI:
-// <<<INIZIO_INFORMAZIONI>>>
-// ${informazioni}
-// <<<FINE_INFORMAZIONI>>>
-
-// DOMANDA:
-// ${domanda}
-
-// OUTPUT_FORMAT:
-// La risposta dovrà essere strutturata nel seguente modo:
-// - Introduzione:
-// - Concetti chiave:
-// - Citazioni:
-// - Inferenze:
-// - Connessioni fra contenuti:
-// - Dettagli rilevanti:
-// - Sintesi:
-
-// RESPONSE:
-// `;
-// }
-
-// function promptWithContext(contesto, domanda) {
-//   return `
-// SYSTEM: Sei un sistema AI specializzato nell'analisi semantica di informazioni estratte da documenti. Rispondi sempre ed esclusivamente in italiano.
-
-// TASK: Elabora la risposta alla domanda sulla base del contesto fornito.
-
-// INSTRUCTIONS:
-// 1. Analizza attentamente il contesto e identifica le informazioni pertinenti alla domanda.
-// 2. Estrai i concetti chiave e fai inferenze ragionevoli.
-// 3. Prepara una risposta chiara e dettagliata utilizzandoo al meglio il contesto.
-// 4. Inizia con una breve introduzione, sviluppa l'analisi, elabora le inferenze e concludi con una sintesi.
-// 5. Se la domanda richiede di citare le fonti, fai riferimento al documento fornito distinguendolo chiaramente da eventuali altre fonti citate all'interno del contesto stesso.
-// 6. Mantieni un tono oggettivo e uno stile fluido e coerente.
-
-// CONTESTO:
-// <<<INIZIO_CONTESTO>>>
-// ${contesto}
-// <<<FINE_CONTESTO>>>
-
-// DOMANDA:
-// ${domanda}
-
-// OUTPUT_FORMAT:
-// Rispondi con un testo piano suddiviso in paragrafi.Evita di usare etichette, elenchi o marcatori speciali.
-
-// RESPONSE:
-// `;
-// }
-
-// function promptThread(contesto, conversazione, richiesta) {
-//   return `
-// SYSTEM: Sei un assistente AI versatile progettato per gestire conversazioni dinamiche e adattarti a varie richieste. Rispondi sempre in italiano.
-
-// TASK: Elabora la risposta alla richiesta sulla base del contesto fornito e della conversazione.
-
-// INSTRUCTIONS:
-// 1. Analizza attentamente il contesto, la conversazione precedente e la richiesta attuale.
-// 2. Interpreta l'intento dell'utente senza limitarti a categorie predefinite.
-// 3. Adatta la tua risposta in base all'intento percepito, sia esso una domanda, una richiesta di azione, un'istruzione specifica o altro.
-// 4. Mantieni una stretta coerenza con il contesto della conversazione.
-// 5. Basa la tua risposta principalmente sulle informazioni fornite nel contesto e nella conversazione.
-// 6. Evita divagazioni o argomentazioni non direttamente pertinenti alla richiesta o al contesto.
-// 7. Fai riferimento a informazioni precedenti quando sono pertinenti, citando specificamente la fonte.
-// 8. Se l'intento non è chiaro, chiedi gentilmente chiarimenti invece di fare supposizioni.
-// 9. Sii flessibile: se la richiesta implica un'azione specifica, adattati di conseguenza.
-// 10. Se è necessario integrare con conoscenze generali, specifica chiaramente quando lo stai facendo.
-
-// CONTESTO:
-// <<<BEGIN_CONTESTO>>>
-// ${contesto}
-// <<<END_CONTESTO>>>
-
-// <<<INIZIO_CONVERSAZIONE>>>
-// ${conversazione}
-// <<<FINE_CONVERSAZIONE>>>
-
-// RICHIESTA:
-// ${richiesta}
-
-// OUTPUT_FORMAT:
-// Rispondi con un testo piano suddiviso in paragrafi.Evita di usare etichette, elenchi o marcatori speciali.
-
-// RESPONSE:
-// `;
-// }
-// - Informazione 1:
-//   Descrizione:
-//   Punti chiave:
-//   Elementi specifici:
-
-// - Informazione 2:
-//   Descrizione:
-//   Punti chiave:
-//   Elementi specifici:
-
-// (Ripeti il formato per ogni informazione identificata)
-
-
-/////////////////
 function promptDoc(testo, domanda, docName) {
   return `
 SYSTEM: Sei un assistente AI specializzato nell'analisi documentale e nell'estrazione mirata di informazioni. Rispondi esclusivamente in italiano.
@@ -180,7 +23,17 @@ ${testo}
 <<<FINE_TESTO>>>
 
 OUTPUT_FORMAT:
-L'ouput deve essere organizzato sula base delle istruioni. L'output deve essere privo di formattazione aggiuntiva o commenti, concentrandosi sul contenuto informativo in modo conciso e diretto. La struttura deve facilitare l'elaborazione automatica da parte di un LLM, privilegiando chiarezza e coerenza delle informazioni sulla leggibilità umana. 
+- Informazione 1:
+    Descrizione:
+    Punti chiave:
+    Elementi specifici:
+
+- Informazione 2:
+    Descrizione:
+    Punti chiave:
+    Elementi specifici:
+
+ (Ripeti il formato per ogni informazione identificata)
 
 RESPONSE:
 `;
@@ -208,26 +61,25 @@ ${informazioni}
 <<<FINE_INFORMAZIONI>>>
 
 OUTPUT_FORMAT:
-L'ouput deve essere organizzato sula base delle istruioni. L'output deve essere privo di formattazione aggiuntiva o commenti, concentrandosi sul contenuto informativo in modo conciso e diretto. La struttura deve facilitare l'elaborazione automatica da parte di un LLM, privilegiando chiarezza e coerenza delle informazioni sulla leggibilità umana. 
+- Informazione 1:
+    Descrizione:
+    Punti chiave:
+    Elementi rilevanti:
+
+- Informazione 2:
+    Descrizione:
+    Punti chiave:
+    Elementi rilevanti:
+
+ (Ripeti il formato per ogni gruppo di informazioni 
+
+- Inferenze Logiche:
+
+- Sintesi Finale:
 
 RESPONSE:
 `;
 }
-// - Informazione 1:
-//   Descrizione:
-//   Punti chiave:
-//   Elementi rilevanti:
-
-// - Informazione 2:
-//   Descrizione:
-//   Punti chiave:
-//   Elementi rilevanti:
-
-// (Ripeti il formato per ogni gruppo di informazioni 
-
-// - Inferenze Logiche:
-
-// - Sintesi Finale:
 
 
 function promptWithContext(contesto, domanda) {
