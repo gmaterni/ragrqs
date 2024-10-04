@@ -2,88 +2,6 @@
 
 "use strict";
 
-/*
-function promptDoc(testo, domanda, docName) {
-  return `
-SYSTEM: Sei un assistente AI specializzato nell'analisi documentale e nell'estrazione mirata di informazioni. Rispondi esclusivamente in italiano.
-
-TASK: Analizza l'estratto del documento "${docName}" e identifica le informazioni rilevanti per rispondere alla domanda: "${domanda}".
-
-INSTRUCTIONS:
-1. Esamina il testo e identifica le informazioni utili per costruire un contesto relativo alla domanda.
-2. Per ogni informazione rilevante, fornisci una breve descrizione.
-3. Elenca i punti chiave pertinenti per ogni informazione.
-4. Riporta elementi specifici (dati, citazioni, eventi) se utili per il contesto.
-5. Struttura la risposta secondo il formato di output specificato.
-
-DOMANDA: ${domanda}
-
-TESTO DA ANALIZZARE:
-<<<INIZIO_TESTO>>>
-${testo}
-<<<FINE_TESTO>>>
-
-OUTPUT_FORMAT:
-- Informazione 1:
-    Descrizione:
-    Punti chiave:
-    Elementi specifici:
-
-- Informazione 2:
-    Descrizione:
-    Punti chiave:
-    Elementi specifici:
-
- (Ripeti il formato per ogni informazione identificata)
-
-RESPONSE:
-`;
-}
-
-function promptBuildContext(informazioni, domanda = "") {
-  return `
-SYSTEM: Sei un assistente AI esperto nella sintesi e nell'organizzazione mirata di informazioni. Rispondi sempre ed esclusivamente in italiano.
-
-TASK: Organizza e sintetizza le informazioni estratte da frammenti di testo di un documento, creando un contesto utile per rispondere alla domanda: "${domanda}".
-
-INSTRUCTIONS:
-1. Esamina tutte le informazioni fornite.
-2. Seleziona e raggruppa le informazioni simili.
-3. Per ogni gruppo di informazioni rilevanti, genera una descrizione concisa.
-4. Elenca i punti chiave essenziali per comprendere il contesto.
-5. Riporta elementi specifici (dati, citazioni, eventi) se utili.
-6. Elimina le informazioni ridondanti, mantenendo solo la versione più completa.
-7. Elabora inferenze logiche basate sulle informazioni, se rilevanti per il contesto.
-8. Genera una sintesi finale del contesto.
-
-INFORMAZIONI:
-<<<INIZIO_INFORMAZIONI>>>
-${informazioni}
-<<<FINE_INFORMAZIONI>>>
-
-OUTPUT_FORMAT:
-- Informazione 1:
-    Descrizione:
-    Punti chiave:
-    Elementi rilevanti:
-
-- Informazione 2:
-    Descrizione:
-    Punti chiave:
-    Elementi rilevanti:
-
- (Ripeti il formato per ogni gruppo di informazioni 
-
-- Inferenze Logiche:
-
-- Sintesi Finale:
-
-RESPONSE:
-`;
-}
-*/
-//////////////////////
-
 function promptDoc(testo, domanda, docName) {
   return `
 SYSTEM: Sei un assistente AI specializzato nell'analisi documentale e nell'estrazione mirata di informazioni. Rispondi esclusivamente in italiano.
@@ -111,7 +29,6 @@ RESPONSE:
 `;
 }
 
-
 function promptBuildContext(informazioni, domanda = "") {
   return `
 SYSTEM: Sei un assistente AI esperto nella sintesi e nell'organizzazione mirata di informazioni. Rispondi sempre ed esclusivamente in italiano.
@@ -138,54 +55,6 @@ OUTPUT_FORMAT: Genera una risposta strutturata come un elenco nel quale ogni ele
 RESPONSE:
 `;
 }
-
-////////////////////////////////////////////////////
-/*
-function promptDoc(testo, domanda, docName) {
-  return `
-RUOLO: Sei un assistente AI specializzato nell'analisi documentale e nell'estrazione mirata di informazioni. Rispondi esclusivamente in italiano.
-
-COMPITO: Analizza il testo estratto dal documento "${docName}" ed estrai tutti gli elementi (concetti, avvenimenti, temi, personaggi, date, luoghi, ecc.) utili per rispondere alla domanda: "${domanda}". Concentrati esclusivamente sulla selezione di elementi utili per rispondere alla domanda evitando commenti o divagazioni superflue. Evita di utilizzare markup, formattazione o altri artifizi grafici. Usa un linguaggio lineare e diretto, evitando ambiguità. Se non ci sono informazioni rilevanti, rispondi con "NESSUNA INFORMAZIONE RILEVANTE". Genera una risposta strutturata come un elenco nel quale ogni elemento è composto da un breve titolo e da una concisa ma completa descrizione. Ricorda di rispondere in italiano indipendentemente dal testo analizzato.
-
-DOMANDA:"${domanda}"
-
-TESTO DA ANALIZZARE:
-<<<INIZIO>>>
-${testo}
-<<<FINE>>>
-
-RISPOSTA:
-`;
-}
-
-function promptBuildContext(informazioni, domanda = "") {
-  return `
-RUOLO: Sei un assistente AI esperto nella sintesi e nell'organizzazione mirata di informazioni. Rispondi sempre ed esclusivamente in italiano.
-
-COMPITO: Analizza le informazioni fornite e riordinale logicamente raggruppando quelle simili. Concentrati sull'organizzazione della risposta in modo tale che sia utilizzabile come contesto per rispondere alla domanda: "${domanda}" e ad eventuali domande simili. Assicurati che non vada persa alcua informazione significativa. Evita di utilizzare markup, formattazione o caratteri grafici. Evita commenti e divagazioni superflue per il contesto. Usa un linguaggio lineare e diretto, evitando ambiguità. Genera una risposta strutturata come un elenco nel quale ogni elemento è cosituito da un breve titolo e da una descrizione concisa ma completa, alla fine dell'elenco aggiungi una sintesi globale ed eventuali inferenze logiche e collegamenti fra le varie informazioni.
-
-INFORMAZIONI:
-<<<INIZIO>>>
-${informazioni}
-<<<FINE>>>
-
-RISPOSTA:
-`;
-}
-*/
-//////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
 
 function promptWithContext(contesto, domanda) {
   return `
