@@ -18,7 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 "use strict";
-const MAX_PROMPT_LENGTH = 1024 * 80;
+const MAX_PROMPT_LENGTH = 1024 * 75;
 // decremento dopo errore per tokens eccessivi
 const PROMPT_DECR = 1024 * 2;
 

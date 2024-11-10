@@ -1,8 +1,8 @@
 /** @format */
 "use strict";
 
-const model_name = "mistralai/Mistral-7B-Instruct-v0.3";
-// const model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1";
+// const model_name = "mistralai/Mistral-7B-Instruct-v0.3";
+const model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 // const model_name = "mistralai/Mixtral-8x22B-Instruct-v0.1"
 
 async function requestGet(url) {

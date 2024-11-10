@@ -205,7 +205,7 @@ function getPayloadBuildContext(prompt) {
     inputs: prompt,
     parameters: {
       task: "text2text-generation",
-      max_new_tokens: 6000,
+      max_new_tokens: 5000,
       num_return_sequences: 1,
       temperature: 0.7,
       top_p: 0.85,
@@ -259,7 +259,7 @@ function getPayloadThread(prompt) {
     inputs: prompt,
     parameters: {
       task: "text2text-generation",
-      max_new_tokens: 6048,
+      max_new_tokens: 4048,
       num_return_sequences: 1,
       temperature: 0.7,
       top_p: 0.85,
