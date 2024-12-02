@@ -197,9 +197,9 @@ const Rag = {
           const s = `DOCUMENTO : ${docName}_${npart}\n${answer}`;
           this.answers.push(s);
         } // end while
-        //implemntare build context
+        //TODO implemntare build context
         const docAnswersLen = docAnswersLst.length;
-        let docAnswresTxt = docAnswersLst.join("\n\n"); //TODO
+        let docAnswresTxt = docAnswersLst.join("\n\n"); s
         let docContext = "";
 
         while (true) {
@@ -227,7 +227,6 @@ const Rag = {
           break;
         } //end while
         UaLog.log(`context  ${docAnswersLen} => ${docContext.length}`);
-        // docContext = cleanResponse(docContext); //AAA
         docContext = `\n### DOCUMENTO: ${docName}\n ${docContext}`;
         this.docContextLst.push(docContext);
       } // end for document
@@ -289,6 +288,8 @@ const Rag = {
     if (!this.ragContext) {
       const ok = await confirm("Contesto vuoto. Vuoi continuare?");
       if (!ok) return "";
+      // HACK gestisce il pulsante verde che ha accettao il contetso vuoto
+      this.ragContext="Sei un assitente AI dispoibile a soddisfare tutte le mi richieste";
     }
     if (ThreadMgr.isFirst()) {
       ThreadMgr.init();

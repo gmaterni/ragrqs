@@ -181,19 +181,18 @@ const setOutText = (txt) => {
 };
 
 // const setOutText2 = async (txt) => {
-  // const t = p.textContent;
-  // if (t.trim().length < 2) {
-  //   p.textContent = txt;
-  //   p.scrollTop = p.scrollHeight;
-  //   return;
-  // }
-  // for (let i = 0; i < txt.length; i++) {
-  //   p.textContent += txt[i];
-  //   p.scrollTop = p.scrollHeight;
-  //   await new Promise((resolve) => setTimeout(resolve, 2));
-  // }
+// const t = p.textContent;
+// if (t.trim().length < 2) {
+//   p.textContent = txt;
+//   p.scrollTop = p.scrollHeight;
+//   return;
+// }
+// for (let i = 0; i < txt.length; i++) {
+//   p.textContent += txt[i];
+//   p.scrollTop = p.scrollHeight;
+//   await new Promise((resolve) => setTimeout(resolve, 2));
+// }
 // };
-
 
 const TextInput = {
   wnd: null,
@@ -326,7 +325,6 @@ const TextInput = {
     ThreadMgr.init();
   },
 };
-
 
 TextOutput = {
   init() {
