@@ -251,7 +251,8 @@ const TextInput = {
   },
   handleEnter(e) {
     if (e.key === "Enter" && !e.shiftKey) {
-      if (!Rag.returnOk()) return;
+      // TODO gestire correttamnet enter  quando il context è vuoto
+      // if (!Rag.returnOk()) return;
       e.preventDefault();
       this.send2();
     }

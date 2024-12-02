@@ -131,5 +131,9 @@
 
 </html>
 <script>
-  openApp();
+  window.addEventListener('load', () => {
+    console.log("Tutti i file esterni (CSS, JavaScript, immagini) sono stati caricati");
+    openApp();
+  });
+
 </script>

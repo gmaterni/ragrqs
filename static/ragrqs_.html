@@ -4,14 +4,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Author:M.Materni" />
+    <meta name="description" content="Author:Giuseppe Materni" />
     <title>RagRqs</title>
 
     <link rel="stylesheet" href="less/normalize.css" />
     <link rel="stylesheet/less" href="less/ragrqs.less" />
     <link rel="stylesheet/less" href="less/ualog3.less" />
     <script src="less/less.js"></script>
-    
+
     <script src="javascript/uadrag.js"></script>
     <script src="javascript/uawindow.js"></script>
     <script src="javascript/uajtfh.js"></script>
@@ -142,5 +142,17 @@
 
 </html>
 <script>
-  openApp();
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   console.log("DOM completamente caricato e analizzato");
+  //   window.addEventListener("load", function () {
+  //     console.log("Tutti i file esterni (CSS, JavaScript, immagini) sono stati caricati");
+  //     openApp();
+  //   });
+  // });
+
+  window.addEventListener('load', () => {
+    console.log("Tutti i file esterni (CSS, JavaScript, immagini) sono stati caricati");
+    openApp();
+  });
+
 </script>

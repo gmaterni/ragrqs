@@ -19,7 +19,7 @@
  */
 
 "use strict";
-const VERS = "0.1.56 (30-11-2024)";
+const VERS = "0.1.58 (02-12-2024)";
 
 var xlog = console.log;
 var xerror = console.error;
@@ -81,6 +81,18 @@ function openApp() {
     showHistory();
   }, 10);
 }
+
+// function openApp() {
+//   tm = umgm();
+//   wnds.init();
+//   Menu.init();
+//   TextInput.init();
+//   TextOutput.init();
+//   Rag.init();
+//   document.querySelector(".menu-btn").checked = false;
+//   release();
+//   showHistory();
+// }
 
 // Visualizza la storia della conversazione
 function showHistory() {
@@ -251,6 +263,28 @@ async function help2(e) {
   const text = await requestGet("./help2.html");
   wnds.wdiv.show(text);
 }
+
+
+function getTheme() {
+  const t = localStorage.getItem("theme");
+  if (!!t && t == "dark") setDark();
+}
+
+function setLight() {
+  document.documentElement.classList.toggle("invert");
+  document.body.classList.remove("theme-dark");
+  document.body.classList.add("theme-light");
+  localStorage.setItem("theme", "ligth");
+}
+
+function setDark() {
+  document.documentElement.classList.toggle("invert");
+  document.body.classList.remove("theme-light");
+  document.body.classList.add("theme-dark");
+  localStorage.setItem("theme", "dark");
+}
+
+
 
 ////////////////////////////////
 // Solo Sviluppo
