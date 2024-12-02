@@ -9,8 +9,8 @@ SYSTEM: Sei un assistente AI specializzato nell'analisi documentale e nell'estra
 TASK: Analizza il testo estratto dal documento "${docName}" e identifica gli elementi rilevanti per rispondere alla domanda: "${domanda}".
 
 INSTRUCTIONS:
-1. Analizza attentamente il testo fornito.
-2. Identifica gli elementi utili per rispondere alla domanda ("${domanda}").
+1. Analizza attentamente il testo fornito compreso fra i marker <<<INIZIO_TESTO>>> e <<<FINE_TESTO>>> .
+2. Identifica gli elementi utili per rispondere alla domanda:"${domanda}".
 3. Per ogni elemento individuato, fornisci un titolo ed una descrizione sintetica ma completa.
 4. Riporta dettagli specifici (dati, citazioni, eventi, personaggi, luoghi, ..) se corelati alla domanda.
 5. Se non ci sono informazioni rilevanti, rispondi con "NESSUNA INFORMAZIONE RILEVANTE".
@@ -28,6 +28,7 @@ OUTPUT_FORMAT: Genera una risposta strutturata come un elenco nel quale ogni ele
 RESPONSE:
 `;
 }
+
 
 function promptBuildContext(informazioni, domanda = "") {
   return `
