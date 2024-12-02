@@ -199,7 +199,7 @@ const Rag = {
         } // end while
         //TODO implemntare build context
         const docAnswersLen = docAnswersLst.length;
-        let docAnswresTxt = docAnswersLst.join("\n\n"); s
+        let docAnswresTxt = docAnswersLst.join("\n\n"); 
         let docContext = "";
 
         while (true) {
