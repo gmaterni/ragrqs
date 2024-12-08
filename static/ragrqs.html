@@ -4,13 +4,30 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Author:G.Materni" />
+    <meta name="description" content="Author:Giuseppe Materni" />
     <title>RagRqs</title>
 
     <link rel="stylesheet" href="css/ragrqs.min.css" />
     <script src="js/ragrqs.min.js"></script>
 
-    
+    <!-- <link rel="stylesheet" href="less/normalize.css" />
+    <link rel="stylesheet/less" href="less/ragrqs.less" />
+    <link rel="stylesheet/less" href="less/ualog3.less" />
+    <script src="less/less.js"></script>    
+    <script src="javascript/uadrag.js"></script>
+    <script src="javascript/uawindow.js"></script>
+    <script src="javascript/uajtfh.js"></script>
+    <script src="javascript/ualog3.js"></script>   
+    <script src="javascript/rag_cleaner.js"></script>
+    <script src="javascript/rag_data_mgr.js"></script>
+    <script src="javascript/rag_http.js"></script>
+    <script src="javascript/rag_mgr.js"></script>
+    <script src="javascript/rag_prompts.js"></script>
+    <script src="javascript/rag_upload.js"></script>
+    <script src="javascript/rag_ui.js"></script>
+    <script src="javascript/rag_env.js"></script>
+    <script src="javascript/app.js"></script> --> -->
+
   <body>
     <div id="spinner" class="spinner">
       <div class="pulse-icon"></div>
@@ -25,24 +42,37 @@
       </label>
 
       <div class="head-wrapper">
-
         <button class="help" onclick="Menu.help();" title="Istruzioni">?</button>
-
         <button class="upload" onclick="Menu.upload();" ; title="Upload files">
           <svg class="icon" viewBox="0 0 24 24">
             <path d="M20 15v2H4v-2H2v5h20v-5zM13 5V1h-2v4H7l5 5 5-5z" fill="none" stroke="#FFFFFF" stroke-width="2" />
           </svg>
         </button>
-
         <button class="upload" onclick="Menu.uploadDir();" ; title="Upload dir">
           <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M20 6h-8l-2-2H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-8 7H8v2h4v-2zm6 0h-4v2h4v-2zm0-4H8v2h10V9z" fill="none" stroke="#FFFFFF" stroke-width="2" />
           </svg>
         </button>
-
         <button class="log active" id="id_log" onclick="Menu.log();" title="Log">Log</button>
         <label class="release"></label>
+
+        <div class="btn-theme">
+          <button class="btn-dark" title="Tema scuro" onclick="setDark()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+          <button class="btn-light" title="Tma charo" onclick="setLight()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          </button>
+        </div>
+
       </div>
+
+
       <div class="menu-box">
         <ul>
           <li><a href="#" onCLick="op0(this);">README</a></li>
@@ -61,12 +91,12 @@
           <li>-</li>
           <li><a href="#" onCLick="help1(this);">Esempi di documenti</a></li>
           <li><a href="#" onCLick="help2(this);">Esempi di domande</a></li>
-
-          <!-- <li><a href="#" onCLick="showPrompts(this);">prompts</a></li>
-          <li><a href="#" onCLick="showTesti(this);">Testo Documenti</a></li> -->
+          <!--  -->
+          <li><a href="#" onCLick="showPrompts(this);">prompts</a></li>
 
         </ul>
       </div>
+
     </div>
 
     <div class="container">
@@ -131,9 +161,10 @@
 
 </html>
 <script>
+
   window.addEventListener('load', () => {
     console.log("Tutti i file esterni (CSS, JavaScript, immagini) sono stati caricati");
     openApp();
   });
-
+  
 </script>
