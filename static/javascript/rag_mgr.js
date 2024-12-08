@@ -28,13 +28,13 @@ function wait(seconds) {
   return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
 
-async function example() {
-  console.log("Inizio attesa...");
-  await wait(5); // Attende 5 secondi
-  console.log("Fine attesa!");
-}
+// async function example() {
+//   console.log("Inizio attesa...");
+//   await wait(5); // Attende 5 secondi
+//   console.log("Fine attesa!");
+// }
 
-example();
+// example();
 
 const truncInput = (txt, decr) => {
   const tl = txt.length;

@@ -8,11 +8,11 @@ const RagUpload = {
       <div class="window-text">
         <div class="btn-wrapper">
           <button class="btn-close" title="chiudi" onclick="UaWindowAdm.closeThis(this)">X</button>
-        </div>     
-        <div class="upload">     
-          <h4>Upload file Text / PDF</h4>    
+        </div>
+        <div class="upload">
+          <h4>Upload file Text / PDF / DOCX</h4>
           <form id="uploadForm">
-              <input class="file" type="file" id="id_fileupload" >   
+              <input class="file" type="file" id="id_fileupload" >
               <button type="button" onclick="RagUpload.upload();">Upload and Convert</button>
           </form>
           <div id="result" class="result"></div>
@@ -52,6 +52,11 @@ const RagUpload = {
         pdfHandler.cleanup();
       } else if (fileExtension === "txt") {
         text = await readTextFile(file);
+      } else if (fileExtension === "docx") {
+        const docxHandler = new DocxHandler();
+        await docxHandler.loadMammoth();
+        text = await docxHandler.extractTextFromDocx(file);
+        docxHandler.cleanup();
       } else {
         alert("Formato file non supportato.");
         return;
@@ -71,9 +76,9 @@ const RagUpload = {
       <div class="window-text">
         <div class="btn-wrapper">
           <button class="btn-close" title="chiudi" onclick="UaWindowAdm.closeThis(this)">X</button>
-        </div>     
-        <div class="upload">     
-          <h4>Upload files Text / PDF</h4>    
+        </div>
+        <div class="upload">
+          <h4>Upload files Text / PDF / DOCX</h4>
           <form id="uploadForm">
               <input id="id_fileupload" class="file" type="file"  webkitdirectory mozdirectory msdirectory odirectory directory multiple />
               <button type="button" onclick="RagUpload.uploadDir();">Upload and Convert</button>
@@ -108,7 +113,7 @@ const RagUpload = {
         UaLog.log_show(fileName);
         const exist = DataMgr.doc_names.includes(fileName);
         if (exist) {
-          UaLog.log_shw(fileName + " : è già in archivio");
+          UaLog.log_show(fileName + " : è già in archivio");
           continue;
         }
         const fileExtension = file.name.split(".").pop().toLowerCase();
@@ -120,6 +125,11 @@ const RagUpload = {
           pdfHandler.cleanup();
         } else if (fileExtension === "txt") {
           text = await readTextFile(file);
+        } else if (fileExtension === "docx") {
+          const docxHandler = new DocxHandler();
+          await docxHandler.loadMammoth();
+          text = await docxHandler.extractTextFromDocx(file);
+          docxHandler.cleanup();
         } else {
           alert("Formato file non supportato.");
           return;
@@ -196,6 +206,49 @@ class PdfHandler {
       this.workerScriptElement = null;
     }
     this.pdfjsLib = null;
+    if (window.gc) {
+      window.gc();
+    }
+  }
+}
+
+class DocxHandler {
+  constructor() {
+    this.mammoth = null;
+    this.scriptElement = null;
+  }
+
+  async loadMammoth() {
+    if (window["mammoth"]) {
+      this.mammoth = window["mammoth"];
+      return;
+    }
+    // Carica mammoth dinamicamente
+    this.scriptElement = document.createElement("script");
+    this.scriptElement.src = "https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.11/mammoth.browser.min.js";
+    document.body.appendChild(this.scriptElement);
+
+    // Aspetta che mammoth sia caricato
+    await new Promise((resolve) => {
+      this.scriptElement.onload = () => {
+        this.mammoth = window["mammoth"];
+        resolve();
+      };
+    });
+  }
+
+  async extractTextFromDocx(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await this.mammoth.extractRawText({ arrayBuffer });
+    return result.value;
+  }
+
+  cleanup() {
+    if (this.scriptElement) {
+      document.body.removeChild(this.scriptElement);
+      this.scriptElement = null;
+    }
+    this.mammoth = null;
     if (window.gc) {
       window.gc();
     }
