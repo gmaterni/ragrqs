@@ -101,31 +101,61 @@ body {
 }
 ///////////////
 
-// theme-dark {
-//   .btn-light {
+.theme-dark {
+  .btn-light {
+    display: inline-block !important;
+  }
+}
+
+.theme-light {
+  .btn-dark {
+    display: inline-block !important;
+  }
+}
+
+.invert {
+  filter: invert(100%);
+  // background-color: white;
+  // background-color: black;
+}
+
+.invert img,
+.invert video,
+.invert iframe {
+  filter: invert(100%);
+}
+
+//UA Bottoni tema
+// .display-theme {
+//   button {
 //     display: inline-block !important;
 //   }
 // }
-// .theme-light {
-//   .btn-dark {
-//     display: inline-block !important;
-//   }
-// }
 
-
-// .invert {
-//   filter: invert(100%);
-//   background-color: white;
-// }
-
-// .invert img,
-// .invert video,
-// .invert iframe {
-//   filter: invert(100%);
-// }
-
-
-
+.btn-theme {
+  position: fixed;
+  top: 0;
+  right: 4vw;
+  height: 4vh;
+  background: inherit;
+  font-weight: bold;
+  margin-left: 5vw;
+  margin-top: 0.5vh;
+  z-index: 2000;
+  button {
+    color: #ffffff;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 5px;
+    display: none;
+    svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+    }
+  }
+}
 
 /////////////////
 .upload {
@@ -584,9 +614,10 @@ div.menu-h {
     background: inherit;
     color: lighten(@color1, 10%);
     font-weight: bold;
-    margin-left: 50vw;
+    margin-left: 40vw;
     margin-top: 0.5vh;
   }
+
   .menu-btn {
     appearance: none;
   }

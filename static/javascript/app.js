@@ -79,6 +79,7 @@ function openApp() {
     document.querySelector(".menu-btn").checked = false;
     release();
     showHistory();
+    getTheme();
   }, 10);
 }
 
@@ -264,27 +265,31 @@ async function help2(e) {
   wnds.wdiv.show(text);
 }
 
+const themeKey = "theme";
 
 function getTheme() {
-  const t = localStorage.getItem("theme");
-  if (!!t && t == "dark") setDark();
+  const t = localStorage.getItem(themeKey);
+  if (!!t && t == "light") {
+    document.body.classList.add("theme-light");
+    document.documentElement.classList.toggle("invert");
+  } else {
+    document.body.classList.add("theme-dark");
+  }
 }
 
 function setLight() {
   document.documentElement.classList.toggle("invert");
   document.body.classList.remove("theme-dark");
   document.body.classList.add("theme-light");
-  localStorage.setItem("theme", "ligth");
+  localStorage.setItem(themeKey, "light");
 }
 
 function setDark() {
   document.documentElement.classList.toggle("invert");
   document.body.classList.remove("theme-light");
   document.body.classList.add("theme-dark");
-  localStorage.setItem("theme", "dark");
+  localStorage.setItem(themeKey, "dark");
 }
-
-
 
 ////////////////////////////////
 // Solo Sviluppo
