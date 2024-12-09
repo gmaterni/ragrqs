@@ -10,7 +10,7 @@ const ID_THREAD = "id_thread";
 const UaDb = {
   create(id, data) {
     if (localStorage.getItem(id)) {
-      xerror(`ID ${id} already exists.`);
+      consoe.error(`ID ${id} already exists.`);
       return;
     }
     localStorage.setItem(id, data);
@@ -32,7 +32,7 @@ const UaDb = {
   },
   delete(id) {
     if (!localStorage.getItem(id)) {
-      xerror(`ID ${id} not found.`);
+      consoe.error(`ID ${id} not found.`);
       return;
     }
     localStorage.removeItem(id);

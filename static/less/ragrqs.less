@@ -27,7 +27,10 @@ button {
 
 html {
   background: @contaniner-bg;
+  scrollbar-width: 8px; /* Larghezza della barra di scorrimento */
+  scrollbar-color: #00d3a2 #676767; /* Colore della barra di scorrimento e dello sfondo */
 }
+
 body {
   background: @contaniner-bg;
   box-sizing: border-box;
@@ -40,6 +43,26 @@ body {
   font-family: @fsans;
   font-weight: normal;
 }
+///////////////
+::-webkit-scrollbar {
+  width:8px; /* Larghezza della barra di scorrimento */
+}
+
+::-webkit-scrollbar-track {
+  background: #686868; /* Colore dello sfondo della traccia */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #575758; /* Colore della barra di scorrimento */
+  border-radius: 6px; /* Arrotondamento degli angoli */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #06eab5; /* Colore della barra di scorrimento al passaggio del mouse */
+}
+
+// /////////////
+
 
 // spinner
 .spinner {
@@ -115,8 +138,6 @@ body {
 
 .invert {
   filter: invert(100%);
-  // background-color: white;
-  // background-color: black;
 }
 
 .invert img,
@@ -322,7 +343,6 @@ div.container {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-
       .text-out {
         flex: 1;
         box-sizing: border-box;
@@ -330,6 +350,7 @@ div.container {
         color: @text-color;
         border: none;
         padding: 2px;
+        margin: 0;
         min-width: 50vw;
         height: 100%;
         border-radius: 10px;
@@ -350,7 +371,8 @@ div.container {
           margin: 0;
           height: 100%;
           box-sizing: border-box;
-          overflow-y: scroll;
+          // FIXME scroll
+           overflow-y: auto;
           scroll-behavior: smooth;
           &.copied {
             background-color: @text-copied-bg;
