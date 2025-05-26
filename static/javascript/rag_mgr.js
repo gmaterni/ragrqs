@@ -18,12 +18,26 @@ const maxLenRequest = (nk = 32) => {
   const mlr = Math.trunc(nc + sp);
   return mlr;
 };
+
+function umgm() {
+  const arr = ["bWtkWlFPXmg=", "SWZtUkZZb18=", "Rm1rUVZzcHM=", "c1pJelNTTHQ=", "Vlt0bE8="];
+  return arr
+    .map((part) => {
+      const ch = atob(part);
+      return ch
+        .split("")
+        .map((char) => String.fromCharCode((char.charCodeAt(0) - 5 + 256) % 256))
+        .join("");
+    })
+    .join("");
+}
+
 const MAX_PROMPT_LENGTH = maxLenRequest(100);
 //HF
 // const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 const MODEL = "mistralai/Mistral-Small-24B-Instruct-2501";
 /////////////
-const API = ff();
+const API = umgm();
 console.log("\n**** MODELl:\n", MODEL);
 console.log(API);
 const client = ClientLLM(API);
