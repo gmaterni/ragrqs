@@ -9,10 +9,6 @@ const ID_DOCS = "id_docs";
 const PROMPT_DECR = 1024 * 10;
 
 const maxLenRequest = (nk = 32) => {
-  //  1024   * 32 = 32758
-  //  32768  * 6 = 196698
-  //  196608 x 0,15 = 29591
-  //  196608 + 29591 = 226199
   const nc = 1024 * nk * 2;
   const sp = nc * 0.1;
   const mlr = Math.trunc(nc + sp);
@@ -37,7 +33,7 @@ const MAX_PROMPT_LENGTH = maxLenRequest(100);
 // const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 // const MODEL = "mistralai/Mistral-Small-24B-Instruct-2501";
 const MODEL = "mistralai/Mistral-Small-3.1-24B-Instruct-2503";
-/////////////
+// /////////////
 const API = umgm();
 console.log("\n**** MODELl:\n", MODEL);
 console.log(API);
@@ -66,6 +62,7 @@ const getResponse = async (payload, timeout = 60) => {
   return rr;
 };
 
+////////////////////////
 const responseDetails = {
   set(response) {
     this.response = response;
