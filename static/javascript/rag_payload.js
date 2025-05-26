@@ -1,5 +1,5 @@
 /** @format */
-/*
+
 function getPayloadDoc(prompt) {
   return {
     model: "",
@@ -47,8 +47,8 @@ function getPayloadThread(prompt) {
     random_seed: 42,
   };
 }
-*/
 
+/*
 function getPayloadDoc(prompt) {
   const payload = {
     inputs: prompt,
@@ -156,3 +156,4 @@ function getPayloadThread(prompt) {
   };
   return payload;
 }
+*/

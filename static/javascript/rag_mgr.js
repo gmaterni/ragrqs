@@ -34,8 +34,9 @@ function umgm() {
 
 const MAX_PROMPT_LENGTH = maxLenRequest(100);
 //HF
-const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
+// const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 // const MODEL = "mistralai/Mistral-Small-24B-Instruct-2501";
+const MODEL = "mistralai/Mistral-Small-3.1-24B-Instruct-2503";
 /////////////
 const API = umgm();
 console.log("\n**** MODELl:\n", MODEL);
@@ -45,10 +46,7 @@ const client = ClientLLM(API);
 
 const getResponse = async (payload, timeout = 60) => {
   payload["model"] = MODEL;
-  //HF
   const url = `https://router.huggingface.co/hf-inference/models/${MODEL}/v1/chat/completions`;
-  // const url = "https://router.huggingface.co/together/v1/chat/completions";
-
   const rr = await client.sendRequest(url, payload, timeout);
   if (rr.error) {
     if (rr.error.code === 499) {
@@ -59,8 +57,10 @@ const getResponse = async (payload, timeout = 60) => {
     }
   }
   if (!rr.response.choices || !rr.response.choices[0] || !rr.response.choices[0].message || rr.response.choices[0].message.content === undefined) {
-    const err = client.createError("Risposta non valida", "ParseError", 500, { message: "La risposta non contiene il contenuto atteso" });
-    return RequestResult(false, null, null, err);
+    rr.error = client.createError("Risposta non valida", "ParseError", 500, { message: "La risposta non contiene il contenuto atteso" });
+    rr.ok = false;
+    return rr;
+    // return RequestResult(false, null, err);
   }
   rr.data = rr.response.choices[0].message.content;
   return rr;
