@@ -40,6 +40,7 @@ const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 const API = umgm();
 console.log("\n**** MODELl:\n", MODEL);
 console.log(API);
+
 const client = ClientLLM(API);
 
 const getResponse = async (payload, timeout = 60) => {
