@@ -13,7 +13,7 @@ const maxLenRequest = (nk = 32) => {
   //  32768  * 6 = 196698
   //  196608 x 0,15 = 29591
   //  196608 + 29591 = 226199
-  const nc = 1024 * nk * 3;
+  const nc = 1024 * nk * 2;
   const sp = nc * 0.1;
   const mlr = Math.trunc(nc + sp);
   return mlr;

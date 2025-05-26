@@ -107,6 +107,7 @@ const ClientLLM = (apiKey) => {
         return createResult(false, null, null, cancelledError);
       }
       if (!response.ok) {
+        console.error("error ok=false\n", response);
         const err = await handleHttpError(response);
         return createResult(false, null, null, err);
       }
@@ -114,6 +115,7 @@ const ClientLLM = (apiKey) => {
       return createResult(true, respJson);
     } catch (error) {
       const err = handleNetworkError(error);
+      console.error("error network:\n", error);
       return createResult(false, null, null, err);
     } finally {
       clearTimeout(timeoutId);
