@@ -36,7 +36,7 @@ const MODEL = "mistralai/Mistral-Small-3.1-24B-Instruct-2503";
 // /////////////
 const API = umgm();
 console.log("\n**** MODELl:\n", MODEL);
-console.log(API);
+// console.log(API);
 
 const client = ClientLLM(API);
 
