@@ -4,10 +4,11 @@ const ClientLLM = (apiKey) => {
   let abortController = null;
   let isCancelled = false;
 
-  const createResult = (ok, response = null, error = null) => {
+  const createResult = (ok, response = null, data = null, error = null) => {
     return {
       ok,
       response,
+      data,
       error,
     };
   };
@@ -103,19 +104,17 @@ const ClientLLM = (apiKey) => {
 
       if (isCancelled) {
         const cancelledError = createError("Richiesta annullata", "CancellationError", 499, { message: "La richiesta è stata interrotta volontariamente dall'utente" });
-        return createResult(false, null, cancelledError);
+        return createResult(false, null, null, cancelledError);
       }
       if (!response.ok) {
-        console.error("error ok=false\n", response);
         const err = await handleHttpError(response);
-        return createResult(false, null, err);
+        return createResult(false, null, null, err);
       }
       const respJson = await response.json();
-      return createResult(true, respJson, null);
+      return createResult(true, respJson);
     } catch (error) {
       const err = handleNetworkError(error);
-      console.error("error network:\n", error);
-      return createResult(false, null, err);
+      return createResult(false, null, null, err);
     } finally {
       clearTimeout(timeoutId);
       abortController = null;

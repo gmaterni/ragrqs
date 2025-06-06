@@ -196,7 +196,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const VERS = "0.2.03";
+const VERS = "0.2.20";
 
 // var xlog = console.log;
 var xlog = function () {};
@@ -235,9 +235,11 @@ function openApp() {
 }
 
 // Visualizza la storia della conversazione
+// invocato da app.js all'inizio della sessione
 function showHistory() {
-  const txt = ThreadMgr.getThread();
-  setOutText(txt);
+  const msgs = ThreadMgr.getUserMessages();
+  const html = messages2html(msgs);
+  setResponseHtml(html);
 }
 
 function release() {
@@ -263,7 +265,9 @@ function showRagResponse(e) {
 
 //conversazione
 function showThread(e) {
-  const txt = ThreadMgr.getThread();
+  const msgs = ThreadMgr.getUserMessages();
+  // const msgs = ThreadMgr.getMessages();
+  const txt = messages2text(msgs);
   wnds.wpre.show(txt);
 }
 

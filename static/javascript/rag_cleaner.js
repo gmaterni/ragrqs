@@ -117,7 +117,7 @@ function cleanResponse(s) {
     // Rimuovi tutti gli altri backslash
     s = s.replace(/\\/g, "");
     // Sostituisce le sequenze di più di due newline con due newline
-    s = s.replace(/\n{3,}/g, "\n\n");
+    s = s.replace(/\n{2,}/g, "\n");
     // unifica spazi multipli
     s = s.replace(/ +/g, " ");
     return s.trim();
@@ -127,49 +127,53 @@ function cleanResponse(s) {
   }
 }
 
-function answerFormtter(inputText) {
-  if (inputText.trim() == "") return "";
-
-  // Controlla se entrambi i tag # User e # Assistant sono presenti nel testo di input
-  const hasUserTag = inputText.includes("# User:");
-  const hasAssistantTag = inputText.includes("# Assistant:");
-
-  if (!hasUserTag || !hasAssistantTag) {
-    // Se almeno uno dei due tag non è presente, inserisci tutto in un unico div con classe assistant
-    return `<div class="assistant"><b>Assistant:</b><br>${inputText.split("\n").join("<br>")}</div>`;
-  }
-
-  // Altrimenti, procedi come prima
-  const lines = inputText.split("\n");
-  let currentSpeaker = null;
-  let resultHtml = "";
-
-  lines.forEach((line) => {
-    line = line.trim();
-    if (line.startsWith("# User:")) {
-      if (currentSpeaker) {
-        resultHtml += `</div>`;
-      }
-      currentSpeaker = "user";
-      resultHtml += `<div class="${currentSpeaker}"><b>User:</b>`;
-    } else if (line.startsWith("# Assistant:")) {
-      if (currentSpeaker) {
-        resultHtml += `</div>`;
-      }
-      currentSpeaker = "assistant";
-      resultHtml += `<div class="${currentSpeaker}"><b>Assistant:</b>`;
-    } else if (line.length > 0) {
-      if (currentSpeaker) {
-        resultHtml += `<br>${line}`;
-      }
+function messages2html(messages) {
+  lst = [];
+  for (const msg of messages) {
+    const role = msg["role"];
+    const content = msg["content"];
+    let s = content.replace(/\n{2,}/g, "\n");
+    // s = s.split("\n").join("<br>");
+    let text = "";
+    if (role == "assistant") {
+      s = s.replace(/\./g, ".\n").replace(/\n{2,}/g, "\n");
+      text = `<div class="assistant"><b>Assistant:</b><br>${s}</div>`;
+    } else if (role == "user") {
+      text = `<div class="user"><b>User:</b><br>${s}</div>`;
+    } else if (role == "system") {
+      text = `<div class="system"><b>System:</b><br>${s}</div>`;
+    } else {
+      alert("ERROR  in role");
+      text = `<div>ERRROR ROLE</div>`;
     }
-  });
-
-  if (currentSpeaker) {
-    resultHtml += `</div>`;
+    lst.push(text);
   }
+  const html = lst.join("\n");
+  // console.log("***HTML:\n", html);
+  return html;
+}
 
-  return resultHtml;
+function messages2text(messages) {
+  lst = [];
+  for (const msg of messages) {
+    const role = msg["role"];
+    const content = msg["content"];
+    const cnt = content.trim();
+    let text = "";
+    if (role == "assistant") {
+      text = `Assistant:\n${cnt}\n`;
+    } else if (role == "user") {
+      text = `User:\n${cnt}`;
+    } else if (role == "system") {
+      text = `System:\n${cnt}`;
+    } else {
+      alert("ERROR  in role");
+      text = `ERRROR ROLE`;
+    }
+    lst.push(text);
+  }
+  const text = lst.join("\n");
+  return text;
 }
 
 function textFormatter(txt) {
