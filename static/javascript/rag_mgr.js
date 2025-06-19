@@ -30,9 +30,13 @@ function umgm() {
 
 const MAX_PROMPT_LENGTH = maxLenRequest(100);
 //HF
-// const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
+const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 // const MODEL = "mistralai/Mistral-Small-24B-Instruct-2501";
-const MODEL = "mistralai/Mistral-Small-3.1-24B-Instruct-2503";
+// const MODEL = "mistralai/Mistral-Small-3.1-24B-Instruct-2503";
+// const MODEL = "mistralai/Magistral-Small-2506"";
+// const MODEL = """;
+// const MODEL = """;
+
 // /////////////
 const API = umgm();
 console.log("\n**** MODELl:\n", MODEL);
