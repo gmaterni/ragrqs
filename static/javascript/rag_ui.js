@@ -189,6 +189,12 @@ const Menu = {
 const setResponseHtml = (html) => {
   const p = document.querySelector("#id-text-out .div-text");
   p.innerHTML = html;
+
+  p.offsetHeight;
+  p.style.display = "none";
+  p.offsetHeight;
+  p.style.display = "";
+
   p.scrollTop = p.scrollHeight;
 };
 
