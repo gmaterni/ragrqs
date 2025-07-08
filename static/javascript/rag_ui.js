@@ -190,9 +190,9 @@ const setResponseHtml = (html) => {
   const p = document.querySelector("#id-text-out .div-text");
   p.innerHTML = html;
 
-  p.offsetHeight;
+  const h1 = p.offsetHeight;
   p.style.display = "none";
-  p.offsetHeight;
+  const h2 = p.offsetHeight;
   p.style.display = "";
 
   p.scrollTop = p.scrollHeight;
