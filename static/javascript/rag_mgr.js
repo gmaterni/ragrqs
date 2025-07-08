@@ -9,62 +9,50 @@ const ID_DOCS = "id_docs";
 const PROMPT_DECR = 1024 * 10;
 
 const maxLenRequest = (nk = 32) => {
-  const nc = 1024 * nk * 2;
+  const nc = 1024 * nk * 3;
   const sp = nc * 0.1;
   const mlr = Math.trunc(nc + sp);
   return mlr;
 };
 
-function umgm() {
-  const arr = ["bWtkVndLdnw=", "aV59e3hGfEo=", "aHNJd2lIW2g=", "TEteWk9bVVU=", "SktKSmY="];
-  return arr
-    .map((part) => {
-      const ch = atob(part);
-      return ch
-        .split("")
-        .map((char) => String.fromCharCode((char.charCodeAt(0) - 5 + 256) % 256))
-        .join("");
-    })
-    .join("");
-}
+// function umgm() {
+//   const arr = ["bWtkVndLdnw=", "aV59e3hGfEo=", "aHNJd2lIW2g=", "TEteWk9bVVU=", "SktKSmY="];
+//   return arr
+//     .map((part) => {
+//       const ch = atob(part);
+//       return ch
+//         .split("")
+//         .map((char) => String.fromCharCode((char.charCodeAt(0) - 5 + 256) % 256))
+//         .join("");
+//     })
+//     .join("");
+// }
 
-const MAX_PROMPT_LENGTH = maxLenRequest(100);
-//HF
-const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
-// const MODEL = "mistralai/Mistral-Small-24B-Instruct-2501";
-// const MODEL = "mistralai/Mistral-Small-3.1-24B-Instruct-2503";
-// const MODEL = "mistralai/Magistral-Small-2506"";
-// const MODEL = """;
-// const MODEL = """;
+const MAX_PROMPT_LENGTH = maxLenRequest(200);
+// const MODEL = "mistral-large-latest"
+// const MODEL = "open-mixtral-8x7b";
+// const MODEL = "mistral-small-2503"
+// const MODEL = "magistral-medium-2506"
+// const MODELcodestral-2501"
+//
+// const MODEL="gemini-1.5-flash"
+// const MODEL="gemini-1.5-pro"
+const MODEL = "gemini-2.0-flash";
 
 // /////////////
-const API = umgm();
+// const API = umgm();
 console.log("\n**** MODELl:\n", MODEL);
 // console.log(API);
+// const client = ClientLLM(API);
 
-const client = ClientLLM(API);
+///////////////
+//gemini
+const apiKey = "AIzaSyAMbjL5tbVKPtNWwQEr8ozQvM_jvSkNCJc";
+const client = new GeminiClient(apiKey);
 
-const getResponse = async (payload, timeout = 60) => {
-  payload["model"] = MODEL;
-  const url = `https://router.huggingface.co/hf-inference/models/${MODEL}/v1/chat/completions`;
-  const rr = await client.sendRequest(url, payload, timeout);
-  if (rr.error) {
-    if (rr.error.code === 499) {
-      alert("Request Interrotta");
-      return null;
-    } else {
-      return rr;
-    }
-  }
-  if (!rr.response.choices || !rr.response.choices[0] || !rr.response.choices[0].message || rr.response.choices[0].message.content === undefined) {
-    rr.error = client.createError("Risposta non valida", "ParseError", 500, { message: "La risposta non contiene il contenuto atteso" });
-    rr.ok = false;
-    return rr;
-    // return RequestResult(false, null, err);
-  }
-  rr.data = rr.response.choices[0].message.content;
-  return rr;
-};
+//mistral
+// const apiKey = "FAUsMsVFSw5gW5OEkvUZEZ1jcIWFlPj4";
+// const client = new MistralClient(apiKey);
 
 const responseDetails = {
   set(response) {
@@ -98,7 +86,8 @@ const responseDetails = {
   //   return this.response.usage.prompt_tokens;
   // },
   get_total_tokens() {
-    return this.response.usage.total_tokens;
+    return 0;
+    // return this.response.usage.total_tokens;
   },
   get_completion_tokens() {
     return this.response.usage.completion_tokens;
@@ -114,8 +103,9 @@ const calcTokens = {
   },
   add(response) {
     if (!response) return;
-    this.sum_input_tokens += response.usage.total_tokens;
-    this.sum_generate_tokens += response.usage.completion_tokens;
+    // this.sum_input_tokens += response.usage.total_tokens;
+    this.sum_input_tokens += 0;
+    // this.sum_generate_tokens += response.usage.completion_tokens;
   },
   get_sum_input_tokens() {
     return this.sum_input_tokens;
@@ -130,9 +120,9 @@ const showTokens = (rsp) => {
   let gtks = calcTokens.get_sum_generate_tokens();
   console.log(`Sum Tokens: ${itks} ${gtks}`);
   responseDetails.set(rsp);
-  itks = responseDetails.get_total_tokens();
-  gtks = responseDetails.get_completion_tokens();
-  console.log(`Response Tokens: ${itks} ${gtks}`);
+  // itks = responseDetails.get_total_tokens();
+  // gtks = responseDetails.get_completion_tokens();
+  // console.log(`Response Tokens: ${itks} ${gtks}`);
 };
 
 function cancelClientRequest() {
@@ -286,8 +276,8 @@ const Rag = {
           [lft, rgt] = getPartDoc(doc, partSize);
           ragLog(`${j}) ${ndoc},${npart}`, lft.length, rgt.length, this.answers);
           const messages = promptDoc(lft, this.ragquery);
-          const payload = getPayloadDoc(messages);
-          const rr = await getResponse(payload, 90);
+          const payload = getPayloadDoc(MODEL, messages);
+          const rr = await client.sendRequest(payload, 90);
           if (!rr) return "";
           const err = rr.error;
           if (!rr.ok) {
@@ -322,8 +312,8 @@ const Rag = {
         let docContext = "";
         while (true) {
           const messages = promptBuildContext(docAnswresTxt, this.ragQuery);
-          const payload = getPayloadBuildContext(messages);
-          const rr = await getResponse(payload, 90);
+          const payload = getPayloadBuildContext(MODEL, messages);
+          const rr = await client.sendRequest(payload, 90);
           if (!rr) return "";
           const err = rr.error;
           if (!rr.ok) {
@@ -365,8 +355,8 @@ const Rag = {
       try {
         while (true) {
           const messages = promptWithContext(context, this.ragQuery);
-          const payload = getPayloadWithContext(messages);
-          const rr = await getResponse(payload, 90);
+          const payload = getPayloadWithContext(MODEL, messages);
+          const rr = await client.sendRequest(payload, 90);
           if (!rr) return "";
           const err = rr.error;
           if (!rr.ok) {
@@ -429,9 +419,9 @@ const Rag = {
     }
     try {
       const messages = ThreadMgr.getMessages();
-      const payload = getPayloadThread(messages);
+      const payload = getPayloadThread(MODEL, messages);
       while (true) {
-        const rr = await getResponse(payload, 90);
+        const rr = await client.sendRequest(payload, 90);
         if (!rr) return "";
         const err = rr.error;
         if (!rr.ok) {
