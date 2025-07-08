@@ -39,21 +39,14 @@ const MAX_PROMPT_LENGTH = maxLenRequest(200);
 // const MODEL="gemini-1.5-pro"
 const MODEL = "gemini-2.0-flash";
 
-// /////////////
-// const API = umgm();
-console.log("\n**** MODELl:\n", MODEL);
-// console.log(API);
-// const client = ClientLLM(API);
-
 ///////////////
 //gemini
-const apiKey = "AIzaSyAMbjL5tbVKPtNWwQEr8ozQvM_jvSkNCJc";
-const client = new GeminiClient(apiKey);
-
+// const apiKey = "AIzaSyAMbjL5tbVKPtNWwQEr8ozQvM_jvSkNCJc";
+// const client = new GeminiClient(apiKey);
 //mistral
 // const apiKey = "FAUsMsVFSw5gW5OEkvUZEZ1jcIWFlPj4";
 // const client = new MistralClient(apiKey);
-
+const client = getLlmClient(MODEL);
 const responseDetails = {
   set(response) {
     this.response = response;

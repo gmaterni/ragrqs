@@ -166,3 +166,15 @@ class LLMClient {
     }
   }
 }
+
+function getLlmClient(model) {
+  console.log("** MODEL:\n", model);
+  if (model.toLowerCase().includes("gemini")) {
+    const apiKey = "AIzaSyAMbjL5tbVKPtNWwQEr8ozQvM_jvSkNCJc";
+    const client = new GeminiClient(apiKey);
+    return client;
+  }
+  const apiKey = "FAUsMsVFSw5gW5OEkvUZEZ1jcIWFlPj4";
+  const client = new MistralClient(apiKey);
+  return client;
+}
