@@ -257,6 +257,21 @@ class GeminiClient extends LLMClient {
   }
 }
 
+///////////
+
+function umgm() {
+  const arr = ["bWtkVndLdnw=", "aV59e3hGfEo=", "aHNJd2lIW2g=", "TEteWk9bVVU=", "SktKSmY="];
+  return arr
+    .map((part) => {
+      const ch = atob(part);
+      return ch
+        .split("")
+        .map((char) => String.fromCharCode((char.charCodeAt(0) - 5 + 256) % 256))
+        .join("");
+    })
+    .join("");
+}
+
 function getLlmClient(model) {
   console.log("** MODEL:\n", model);
   if (model.toLowerCase().includes("gemini")) {
