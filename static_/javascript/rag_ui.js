@@ -27,6 +27,7 @@ const errorDumps = (err) => {
 const WndPre = (id) => {
   return {
     w: UaWindowAdm.create(id),
+    out: null,
     show(s) {
       const fh = (txt) => {
         return `
@@ -73,6 +74,7 @@ const WndPre = (id) => {
 const WndDiv = (id) => {
   return {
     w: UaWindowAdm.create(id),
+    out: null,
     show(s) {
       const fh = (txt) => {
         return `
@@ -184,19 +186,13 @@ const Menu = {
   },
 };
 
-// const setResponseHtml = (html) => {
-//   const p = document.querySelector("#id-text-out .div-text");
-//   p.innerHTML = html;
-//   p.scrollTop = p.scrollHeight;
-// };
-
 const setResponseHtml = (html) => {
   const p = document.querySelector("#id-text-out .div-text");
   p.innerHTML = html;
 
-  const height = p.offsetHeight;
+  const h1 = p.offsetHeight;
   p.style.display = "none";
-  const height2 = p.offsetHeight;
+  const h2 = p.offsetHeight;
   p.style.display = "";
 
   p.scrollTop = p.scrollHeight;
@@ -312,12 +308,12 @@ const TextInput = {
     }
     const query = this.inp.value.trim();
     try {
-      let html = await Rag.requestContext(query);
-      if (html == "") {
+      let text = await Rag.requestContext(query);
+      if (text == "") {
         hideSpinner();
         return;
       }
-      setResponseHtml(html);
+      setResponseHtml(text);
       this.inp.value = "";
     } catch (err) {
       console.error("Error send2", err);

@@ -1,44 +1,6 @@
 /** @format */
-//////////////////////
-// GESTIONE LLM_CLIEN
-//////////////////////
-
-// const PROVVIDER = "mistral";
-// const MODEL = "codestral-2501";
-// const MODEL = "magistral-medium-2506";
-// const MODEL = "magistral-small-2506";
-// const MODEL = "devstral-medium-2507";
-// const MODEL = "devstral-small-2507";
-// const MODEL = "mistral-large-2411";
-// const MODEL = "mistral-medium-2505";
-// const MODEL = "mistral-small-2506";
-// const MODEL = "open-mixtral-8x7b";
-// const adapter = window.MistralAdapter;
-
-const PROVVIDER = "gemini";
-// const MODEL = "gemini-2.5-flash";
-const MODEL = "gemini-2.0-flash";
-const adapter = window.GeminiAdapter;
-
-// const PROVVIDER = "groq";
-// const MODEL = "llama-3.3-70b-versatile";
-// const MODEL = "deepseek-r1-distill-llama-70b";
-// const MODEL = "gemma2-9b-it";
-// const MODEL = "meta-llama/llama-4-maverick-17b-128e-instruct";
-// const MODEL = "llama-3.1-8b-instant";
-// const adapter = window.GroqAdapter;
-
-// const PROVVIDER = "huggingface";
-// const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
-// const MODEL= "mistralai/Mistral-7B-Instruct-v0.2" ;
-
-console.log("*** PROVI;ER: ", PROVVIDER);
-console.log("*** MODEL: ", MODEL);
-const apiKey = getApiKey(PROVVIDER);
-const client = new HttpLlmClient(adapter, apiKey);
-//////////////////////////////////////////////////
-
 const ID_RAG = "id_rag";
+
 const ID_THREAD = "id_thread";
 const ID_RESPONSES = "id_responses";
 const ID_DOC_NAMES = "id_doc_names";
@@ -52,35 +14,130 @@ const maxLenRequest = (nk = 32) => {
   const mlr = Math.trunc(nc + sp);
   return mlr;
 };
-const MAX_PROMPT_LENGTH = maxLenRequest(100);
+
+// function umgm() {
+//   const arr = ["bWtkVndLdnw=", "aV59e3hGfEo=", "aHNJd2lIW2g=", "TEteWk9bVVU=", "SktKSmY="];
+//   return arr
+//     .map((part) => {
+//       const ch = atob(part);
+//       return ch
+//         .split("")
+//         .map((char) => String.fromCharCode((char.charCodeAt(0) - 5 + 256) % 256))
+//         .join("");
+//     })
+//     .join("");
+// }
+
+const MAX_PROMPT_LENGTH = maxLenRequest(200);
+// const MODEL = "mistral-large-latest"
+// const MODEL = "open-mixtral-8x7b";
+// const MODEL = "mistral-small-2503"
+// const MODEL = "magistral-medium-2506"
+// const MODELcodestral-2501"
+//
+// const MODEL="gemini-1.5-flash"
+// const MODEL="gemini-1.5-pro"
+const MODEL = "gemini-2.0-flash";
+
+///////////////
+//gemini
+// const apiKey = "AIzaSyAMbjL5tbVKPtNWwQEr8ozQvM_jvSkNCJc";
+// const client = new GeminiClient(apiKey);
+//mistral
+// const apiKey = "FAUsMsVFSw5gW5OEkvUZEZ1jcIWFlPj4";
+// const client = new MistralClient(apiKey);
+const client = getLlmClient(MODEL);
+const responseDetails = {
+  set(response) {
+    this.response = response;
+  },
+  // get_id() {
+  //   return this.response.id;
+  // },
+  // get_created() {
+  //   return this.response.created;
+  // },
+  // get_model() {
+  //   return this.response.model;
+  // },
+  // get_index() {
+  //   return this.response.choices[0].index;
+  // },
+  // get_role() {
+  //   return this.response.choices[0].message.role;
+  // },
+  // get_tool_calls() {
+  //   return this.response.choices[0].message.tool_calls;
+  // },
+  // get_content() {
+  //   return this.response.choices[0].message.content;
+  // },
+  // get_finish_reason() {
+  //   return this.response.choices[0].finish_reason;
+  // },
+  // get_prompt_tokens() {
+  //   return this.response.usage.prompt_tokens;
+  // },
+  get_total_tokens() {
+    return 0;
+    // return this.response.usage.total_tokens;
+  },
+  get_completion_tokens() {
+    return this.response.usage.completion_tokens;
+  },
+};
+
+const calcTokens = {
+  sum_input_tokens: 0,
+  sum_generate_tokens: 0,
+  init() {
+    this.sum_input_tokens = 0;
+    this.sum_generate_tokens = 0;
+  },
+  add(response) {
+    if (!response) return;
+    // this.sum_input_tokens += response.usage.total_tokens;
+    this.sum_input_tokens += 0;
+    // this.sum_generate_tokens += response.usage.completion_tokens;
+  },
+  get_sum_input_tokens() {
+    return this.sum_input_tokens;
+  },
+  get_sum_generate_tokens() {
+    return this.sum_generate_tokens;
+  },
+};
+
+const showTokens = (rsp) => {
+  let itks = calcTokens.get_sum_input_tokens();
+  let gtks = calcTokens.get_sum_generate_tokens();
+  console.log(`Sum Tokens: ${itks} ${gtks}`);
+  responseDetails.set(rsp);
+  // itks = responseDetails.get_total_tokens();
+  // gtks = responseDetails.get_completion_tokens();
+  // console.log(`Response Tokens: ${itks} ${gtks}`);
+};
 
 function cancelClientRequest() {
   client.cancelRequest();
 }
 
+const getPromptTokens = (err) => {
+  const msg = err.details.message;
+  const match = msg.match(/Prompt contains (\d+) tokens/);
+  return match ? parseInt(match[1], 10) : null;
+};
+
+const getModelToken = (err) => {
+  const msg = err.details.message;
+  const match = msg.match(/model with (\d+) maximum context length/);
+  return match ? parseInt(match[1], 10) : null;
+};
+
 const isTooLarge = (err) => {
-  if (!err) return false;
-  const msgs = ["too large", "too long", "length exceeded", "exceeds maximum length", "exceeded", "context length"];
-  const code = err.code ?? err.status;
-  if (code === 413) return true;
-  const containsMessages = (obj, messages) => {
-    const lowerMsgs = messages.map((msg) => msg.toLowerCase());
-    const search = (val) => {
-      if (typeof val === "string") {
-        const lowerVal = val.toLowerCase();
-        return lowerMsgs.some((msg) => lowerVal.includes(msg));
-      }
-      if (Array.isArray(val)) return val.some(search);
-      if (val && typeof val === "object") return Object.values(val).some(search);
-      return false;
-    };
-    return search(obj);
-  };
-  const possibleSources = [err.body, err.message, err.error, err];
-  if (code === 400 || !code) {
-    return possibleSources.some((source) => containsMessages(source, msgs));
-  }
-  return false;
+  const msg = err.details.message;
+  const tks = msg.includes("too large");
+  return tks;
 };
 
 const truncateInput = (txt, decr) => {
@@ -126,6 +183,8 @@ const ragLog = (msg, lftL, rgtL, answers) => {
   const rspsL = answers.reduce((acc, cur) => {
     return acc + cur.length;
   }, 0);
+  let s = `${msg} mx:${maxl} lft:${lftL} rgt:${rgtL} arr:${rspsL}`;
+  xlog(s);
   const row = formatRow([msg, lftL, rgtL, rspsL], [8, -7, -7, -7]);
   UaLog.log(row);
 };
@@ -144,6 +203,7 @@ const Rag = {
     ThreadMgr.initThread();
     this.readRespsFromDb();
     this.readFromDb();
+    calcTokens.init();
   },
   returnOk() {
     const ok = this.ragContext.length > 10;
@@ -194,6 +254,7 @@ const Rag = {
         if (doc.trim() == "") continue;
         const docName = DataMgr.doc_names[i];
         const doc_entire_len = doc.length;
+        xlog(`${docName} (${doc_entire_len}) `);
         UaLog.log(`${docName} (${doc_entire_len}) `);
         ++ndoc;
         let npart = 1;
@@ -214,19 +275,23 @@ const Rag = {
           const err = rr.error;
           if (!rr.ok) {
             console.error(`ERR1\n`, err);
-            if (isTooLarge(err)) {
-              UaLog.log(`Error tokens `);
-              decr += PROMPT_DECR;
-              continue;
-            }
             const code = err.code;
-            if (code == 408) {
+            if (code == 400) {
+              if (isTooLarge(err)) {
+                UaLog.log(`Error tokens Doc ${prompt.length}`);
+                decr += PROMPT_DECR;
+                continue;
+              } else throw err;
+            } else if (code == 408) {
               UaLog.log(`Error timeout Context`);
               continue;
             } else throw err;
           }
           answer = rr.data;
           if (!answer) return "";
+          const rsp = rr.response;
+          showTokens(rsp);
+          calcTokens.add(rsp);
           npart++;
           j++;
           doc = rgt;
@@ -246,19 +311,22 @@ const Rag = {
           const err = rr.error;
           if (!rr.ok) {
             console.error(`ERR2\n`, err);
-            if (isTooLarge(err)) {
-              UaLog.log(`Error tokens `);
-              decr += PROMPT_DECR;
-              continue;
-            }
             const code = err.code;
-            if (code == 408) {
+            if (code == 400) {
+              if (isTooLarge(err)) {
+                UaLog.log(`Error tokens build Context ${prompt.length}`);
+                docAnswresTxt = truncateInput(docAnswresTxt, PROMPT_DECR);
+                continue;
+              } else throw err;
+            } else if (code == 408) {
               UaLog.log(`Error timeout Context`);
               continue;
             } else throw err;
           }
           docContext = rr.data;
           if (!docContext) return "";
+          const rsp = rr.response;
+          calcTokens.add(rsp);
           break;
         } //end while
         UaLog.log(`context  ${docAnswersLen} => ${docContext.length}`);
@@ -286,19 +354,22 @@ const Rag = {
           const err = rr.error;
           if (!rr.ok) {
             console.error(`ERR4\n`, err);
-            if (isTooLarge(err)) {
-              UaLog.log(`Error tokens}`);
-              decr += PROMPT_DECR;
-              continue;
-            }
             const code = err.code;
-            if (code == 408) {
+            if (code == 400) {
+              if (isTooLarge(err)) {
+                UaLog.log(`Error tokens with Context ${messages.length}`);
+                context = truncateInput(context, PROMPT_DECR);
+                continue;
+              } else throw err;
+            } else if (code == 408) {
               UaLog.log(`Error timeout Context`);
               continue;
             } else throw err;
           }
           answer = rr.data;
           if (!answer) return "";
+          const rsp = rr.response;
+          calcTokens.add(rsp);
           break;
         }
         answer = cleanResponse(answer);
@@ -306,6 +377,10 @@ const Rag = {
         this.saveRespToDb();
         this.saveToDb();
         UaLog.log(`Risposta: (${this.ragAnswer.length})`);
+        //log del totale tokens
+        const itks = calcTokens.get_sum_input_tokens();
+        const gtks = calcTokens.get_sum_generate_tokens();
+        UaLog.log(`Tokens: ${itks} ${gtks}`);
         // costruzione html  per query e risposta
         const messages = [];
         messages.push({ role: "user", content: this.ragQuery });
@@ -345,16 +420,19 @@ const Rag = {
         if (!rr.ok) {
           console.error(`ERR6\n`, err);
           const code = err.code;
-          if (code == 408) {
-            continue;
-          }
-          if (isTooLarge(err)) {
-            alert("Conversazione troppo lunga");
-          }
-          throw err;
+          if (code == 400) {
+            if (isTooLarge(err)) {
+              alert("Conversazione troppo lunga");
+            }
+            throw err;
+          } else if (code == 408) continue;
+          else throw err;
         }
         answer = rr.data;
         if (!answer) return "";
+        const rsp = rr.response;
+        showTokens(rsp);
+        calcTokens.add(rsp);
         break;
       }
       answer = cleanResponse(answer);
