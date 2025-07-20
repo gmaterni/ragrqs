@@ -3,22 +3,22 @@
 // GESTIONE LLM_CLIEN
 //////////////////////
 
-// const PROVVIDER = "mistral";
+const PROVVIDER = "mistral";
 // const MODEL = "codestral-2501";
 // const MODEL = "magistral-medium-2506";
 // const MODEL = "magistral-small-2506";
 // const MODEL = "devstral-medium-2507";
 // const MODEL = "devstral-small-2507";
 // const MODEL = "mistral-large-2411";
-// const MODEL = "mistral-medium-2505";
+const MODEL = "mistral-medium-2505";
 // const MODEL = "mistral-small-2506";
 // const MODEL = "open-mixtral-8x7b";
-// const adapter = window.MistralAdapter;
+const adapter = window.MistralAdapter;
 
-const PROVVIDER = "gemini";
+// const PROVVIDER = "gemini";
 // const MODEL = "gemini-2.5-flash";
-const MODEL = "gemini-2.0-flash";
-const adapter = window.GeminiAdapter;
+// const MODEL = "gemini-2.0-flash";
+// const adapter = window.GeminiAdapter;
 
 // const PROVVIDER = "groq";
 // const MODEL = "llama-3.3-70b-versatile";
