@@ -10,8 +10,8 @@ const PROVVIDER = "mistral";
 // const MODEL = "devstral-medium-2507";
 // const MODEL = "devstral-small-2507";
 // const MODEL = "mistral-large-2411";
-const MODEL = "mistral-medium-2505";
-// const MODEL = "mistral-small-2506";
+// const MODEL = "mistral-medium-2505";
+const MODEL = "mistral-small-latest";
 // const MODEL = "open-mixtral-8x7b";
 const adapter = window.MistralAdapter;
 
